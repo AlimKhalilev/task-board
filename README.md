@@ -25,3 +25,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Для возможности написание стилей SCSS
+```
+npm install -D sass-loader node-sass
+```
