@@ -26,7 +26,17 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### Для возможности написание стилей SCSS
+### Для возможности написания стилей SCSS
 ```
 npm install -D sass-loader node-sass
+```
+
+### Подключение axios
+```
+npm install axios
+```
+
+### Вставка в шаблон .vue
+```
+import axios from 'axios'
 ```

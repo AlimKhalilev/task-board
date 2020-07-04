@@ -1,19 +1,22 @@
 <template>
-    <div class="reg">
-        <div class="reg-container">
-            <div class="reg-container-header">
+    <div class="form">
+        <div class="form-container">
+            <div class="form-container-header">
                 <h2>Регистрация</h2>
             </div>
-            <form class="reg-container-form">
-                <input type="text" name="login" placeholder="Логин">
-                <input type="password" name="password" placeholder="Пароль">
+            <form class="form-container-inner" v-on:submit.prevent="sendReg">
+                <input type="text" name="login" placeholder="Логин" v-model="login">
+                <input type="text" name="password" placeholder="Пароль" v-model="password">
                 <hr>
-                <input type="text" name="name" placeholder="Имя">
-                <input type="text" name="surname" placeholder="Фамилия">
-                <input type="email" name="mail" placeholder="Почта">
+                <input type="text" name="name" placeholder="Имя" v-model="name">
+                <input type="text" name="surname" placeholder="Фамилия" v-model="surname">
+                <input type="email" name="mail" placeholder="Почта" v-model="mail">
                 <input type="submit" value="Регистрация">
+                <div class="validate" v-if="validateMsg" v-bind:class="{success: successReg}">
+                    <p v-html="validateMsg"></p>
+                </div>
             </form>
-            <div class="reg-container-footer">
+            <div class="form-container-footer">
                 <span>Уже есть аккаунт? <router-link to="/">Авторизация</router-link></span>
             </div>
         </div>
@@ -22,95 +25,83 @@
 
 <style lang="scss">
 
-    .reg {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        
-        &-container {
-            background-color: #042b3e;
-            box-shadow: 0.625rem 0.625rem 0.3rem 0px rgba(0,0,0,0.4);
-            min-width: 350px;
-            text-align: center;
-
-            &-header {
-                padding: 1.5rem 2rem 1rem 2rem;
-                background-color: #154e6b;
-
-                h2 {
-                    font-size: 1.6rem;
-                    margin: 0;
-                }
-            }
-
-            &-form {
-                display: flex;
-                flex-direction: column;
-                padding: 1.5rem 2rem;
-
-                hr {
-                    margin: 0;
-                    border: 0;
-                    border-bottom: 1px solid #134e6b;
-                    margin-top: 0.3rem;
-                    margin-bottom: 1.5rem;
-                }
-
-                input {
-                    outline: none;
-                    font-size: 1rem;
-                    font-weight: 500;
-                    color: #fff;
-                    background: transparent;
-                    border: 1px solid #134e6b;
-                    padding: 0.8rem 1rem;
-                    transition: 0.3s ease-in-out;
-                    font-family: 'Comfortaa', cursive;
-
-                    &::placeholder {
-                        color: rgb(166, 170, 189);
-                    }
-
-                    &[type="submit"] {
-                        background-color: #154e6b;
-                        padding: 0.8rem;
-                        cursor: pointer;
-                        box-shadow: 0.625rem 0.625rem 0.625rem -0.25rem #0f0f0f;
-                        border: none;
-
-                        &:hover {
-                            transform: translate(-0.15rem, -0.15rem);
-                            box-shadow: 1rem 1rem 0.625rem -0.35rem #0f0f0f;
-                        }
-                    }
-
-                    &:not(:last-child) {
-                        margin-bottom: 1.2rem;
-                    }
-                }
-            }
-
-            &-footer {
-                margin-bottom: 1.5rem;
-
-                span {
-                    font-size: 0.9rem;
-
-                    a {
-                        color: #fff;
-                    }
-                }
-            }
-        }
-    }
-
 </style>
 
 <script>
+import axios from 'axios';
 export default {
-    beforeCreate() {
+    mounted() {
         document.title = "Регистрация - TaskBoard"
+    },
+    data() {
+        return {
+            login: '',
+            password: '',
+            name: '', 
+            surname: '',
+            mail: '',
+            validateMsg: '',
+            successReg: false
+        }
+    },
+    methods: {
+        sendReg() {
+            if (this.login == "" || this.password == "" || this.name == "" || this.surname == "" || this.mail == "") { // проверка на заполненность полей
+                this.validateMsg = 'Заполните все поля!';
+                return 0;
+            }
+            else {
+                axios // проверка на несуществование учетки в бд (1 нет, 0 есть)
+                    .post("https://files.thechampguess.ru/taskboard.php", {
+                        type: "checkReg",
+                        login: this.login
+                    })
+                    .then(response => {
+                        if (response.data == "none") { // если учетки нет
+                            this.sendRegData();
+                        }
+                        else { // если учетка есть
+                            this.validateMsg = 'Логин уже существует! <br>Придумайте другой';
+                            this.successReg = false;
+                            return 0;
+                        }
+                    }
+                    )
+                    .catch(error => console.log(error));
+            }
+        },
+        sendRegData() { // запрос в бд на регистрацию
+            axios
+                .post("https://files.thechampguess.ru/taskboard.php", {
+                    type: "registration",
+                    login: this.login,
+                    password: this.password,
+                    name: this.name, 
+                    surname: this.surname,
+                    mail: this.mail,
+                })
+                .then(response => {
+                    if (!response.data) {
+                        console.log("Empty data"); // пустое значение из API
+                    }
+                    else if (response.data == "success"){
+                        this.validateMsg = 'Вы успешно <br>зарегистрировались!';
+                        this.successReg = true;
+
+                        setTimeout(function() {
+                            this.$router.push({path: '/'}) // переход на главную страницу через 2 сек
+                        }, 2000)
+                    }
+                }
+                )
+                .catch(error => console.log(error));
+        },
+        setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            var expires = "expires="+ d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
     }
 }
 </script>
