@@ -1,0 +1,73 @@
+@import "normalize";
+@import "colors";
+@import "grid";
+@import "mixins";
+//@import "animate";
+
+.form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    
+    &-container {
+        background-color: $color_bg_card;
+        @include boxShadow;
+        min-width: 350px;
+        text-align: center;
+
+        &-header {
+            padding: 1.5rem 2rem 1rem 2rem;
+            background-color: $color_checked;
+
+            h2 {
+                font-size: 1.6rem;
+            }
+        }
+
+        &-inner {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 2rem;
+
+            hr {
+                margin: 0;
+                border: 0;
+                border-bottom: 1px solid $color_checked;
+                margin-top: 0.3rem;
+                margin-bottom: 1.5rem;
+            }
+
+            input {
+                &:not(:last-child) {
+                    margin-bottom: 1.2rem;
+                }
+            }
+
+            .validate {
+                
+                &.success {
+                    p {
+                        color: $color_success;
+                    }
+                }
+                p {
+                    color: $color_error;
+                    margin: 0.5rem 0 0;
+                }
+            }
+        }
+
+        &-footer {
+            margin-bottom: 1.5rem;
+
+            span {
+                font-size: 0.9rem;
+
+                a {
+                    color: $color_main;
+                }
+            }
+        }
+    }
+}

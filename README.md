@@ -28,7 +28,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Для возможности написания стилей SCSS
 ```
-npm install -D sass-loader node-sass
+npm install sass-loader node-sass style-loader --save-dev
 ```
 
 ### Подключение axios

@@ -1,0 +1,404 @@
+@import "normalize";
+@import "colors";
+@import "grid";
+@import "mixins";
+//@import "animate";
+
+// === / SectionName ===
+
+.section-main {
+    margin: 2rem;
+
+    .section-inner {
+        display: flex;
+    }
+
+    &-pane {
+        margin-right: 2rem;
+        background-color: $color_bg_card;
+        min-height: calc(100vh - (2rem * 2) - 3.5rem);
+        position: fixed;
+        @include boxShadow;
+        min-width: 300px;
+
+        position: sticky;
+        top: 2rem;
+        height: calc(100vh - 4rem);
+
+        display: flex;
+        flex-direction: column;
+
+        .account {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: $color_checked;
+            padding: 1.4rem 1.5rem;
+
+            &-name {
+                display: flex;
+                align-items: center;
+                transition: 0.3s ease-in-out;
+                cursor: pointer;
+
+                span {
+                    margin-left: 0.5rem;
+                    padding-top: 0.2rem;
+                }
+
+                &:hover {
+                    color: $color_success;
+
+                    svg {
+                        fill: $color_success;
+                    }
+                }
+            }
+
+            &-links {
+                display: flex;
+
+                svg {    
+                    &:hover {
+                        fill: $color_success;
+                    }
+                }
+            }      
+        }
+
+        .items {
+            padding: 0 1.5rem;
+            margin: 1.5rem 0 auto 0;
+
+            &-item {
+                background-color: $color_checked;
+                transition: 0.3s ease-in-out;
+                padding: 1rem;
+                cursor: pointer;
+                @include boxShadowItem;
+    
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+    
+                &:not(:last-child) {
+                    margin-bottom: 1.2rem;
+                }
+    
+                &:hover {
+                    transform: translate(-0.25rem, -0.25rem);
+                    @include boxShadowItemHover;
+                }
+    
+                &-text {
+    
+                }
+    
+                &-stat {
+                    font-size: 0.85rem;
+    
+                    &.completed {
+                        color: $color_success;
+                    }
+                }
+            }
+        }
+
+        .author {
+            padding: 1.5rem;
+
+            h4 {
+                text-align: center;
+                color: $color_success;
+            }
+        }
+    }
+
+    &-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        align-content: flex-start;
+        gap: 2rem;
+
+        @media ($media_xl) {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .card {
+            background-color: $color_bg_card;
+            transition: 0.3s ease-in-out;
+            @include boxShadow;
+            align-self: flex-start;
+
+            &:hover {
+                background-color: darken($color_bg_card, 2);
+                transform: translate(-0.25rem, -0.25rem);
+                @include boxShadowHover;
+
+                .card-footer-add svg, .card-footer-edit svg {
+                    opacity: 1;
+                }
+            }
+
+            &-header {
+                padding: 1.5rem 2rem 1rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: $color_checked;
+
+                h3 {
+                    font-size: 1.3rem;
+                }
+            }
+
+            &-container {
+                padding: 0.7rem 2rem;
+
+                &-items {
+                    
+                    &-item {
+
+                        &-text {
+                            display: flex;
+                            flex-wrap: wrap;
+                            align-items: center;
+                            cursor: pointer;
+                            padding-top: 0.9rem;
+
+                            input[type="checkbox"] {
+                                -webkit-appearance: none;
+                                width: 0;
+                                height: 0;
+                                visibility: hidden;
+                            }
+        
+                            input[type="checkbox"]:checked ~ span::before {
+                                border-top: none;
+                                border-right: none;
+                                height: 0.7rem;
+                                width: 1.2rem;
+                                transform: rotate(-45deg);
+                                top: calc(50% - 0.7rem + 0.1rem);
+                                border-color: $color_success;
+                            }
+        
+                            input[type="checkbox"]:checked ~ span {
+                                color: $color_checked;
+                                text-decoration: line-through;
+                            }
+        
+                            // input[type="checkbox"]:checked ~ span::after {
+                            //     transform: translateY(-50%) scaleX(1);
+                            // }
+        
+                            span {
+                                position: relative;
+                                font-size: 0.9rem;
+                                line-height: 1.6;
+                                padding-left: calc(1.2rem + 0.8rem);
+                                transition: 0.3s ease-in-out;
+        
+                                &::before {
+                                    content: '';
+                                    position: absolute;
+                                    left: 0;
+                                    height: 1rem;
+                                    width: 1rem;
+                                    border: 0.08rem solid $color_main;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    transition: 0.3s ease-in-out;
+                                }
+                            }
+                        }
+
+                        &-edit {
+                            display: flex;
+                            flex-basis: 100%;
+                            justify-content: flex-end;
+                            margin: 0.2rem 0;
+                            transition: 0.3s ease-in-out;
+                            opacity: 0;
+
+                            svg {
+                                width: 0.75rem;
+                                height: 0.75rem;
+                                fill: $color_warning;
+                                margin-left: 0.4rem;
+                            }
+
+                            &-date, &-links {
+                                display: flex;
+                                align-items: center;
+                            }
+
+                            &-date {
+                                padding-right: 0.3rem;
+                                border-right: 1px solid $color_checked;
+
+                                span {
+                                    position: relative;
+                                    font-size: 0.65rem;
+                                    padding-top: 0.2rem;
+                                    color: $color_warning;
+                                    cursor: pointer;
+                                    z-index: 1;
+
+                                    &::before {
+                                        width: 100%;
+                                        content: "Дата добавления";
+                                        background-color: black;
+                                        color: $color_main;
+                                        padding: 0.3rem 0.5rem;
+                                        font-size: 0.6rem;
+                                        position: absolute;
+                                        left: 0;
+                                        bottom: -2.2rem;
+                                        display: none;
+                                    }
+
+                                    &:hover {
+                                        &::before {
+                                            display: block;
+                                            opacity: 1;
+                                        }
+                                    }
+
+                                    &.completed {
+                                        padding-right: 0.3rem;
+                                        margin-right: 0.3rem;
+                                        border-right: 1px solid $color_checked;
+                                        color: $color_success;
+
+                                        &::before {
+                                            content: "Дата выполнения";
+                                        }
+                                    }
+                                }
+
+                                svg {
+                                    fill: $color_warning;
+                                }
+                            }
+
+                            &-links {
+
+                                svg {
+    
+                                    &:last-child {
+                                        fill: $color_error;
+                                    }
+                                }
+                            }
+                        }
+    
+                        &:not(:last-child) {
+                            margin-bottom: 0.7rem;
+                            border-bottom: 1px solid $color_checked;
+                        }
+
+                        &:hover {
+                            .card-container-items-item-edit {
+                                opacity: 1;
+                            }
+                        }
+                    }
+
+                    &-content {
+                        padding: 0.8rem 0;
+
+                        span {
+                            font-size: 0.9rem;
+                            line-height: 1.6;
+                        }
+                    }
+                }
+            }
+
+            &-footer {
+                padding: 0 2rem 1rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                &-date {
+                    display: flex;
+                    align-items: center;
+                    color: $color_warning;
+
+                    span {
+                        position: relative;
+                        padding-top: 0.1rem;
+                        margin-left: 0.5rem;
+                        font-size: 0.8rem;
+                        cursor: pointer;
+
+                        &::before {
+                            content: "Дата добавления";
+                            background-color: black;
+                            color: $color_main;
+                            padding: 0.35rem 0.6rem;
+                            font-size: 0.7rem;
+                            position: absolute;
+                            left: 0;
+                            bottom: -2.5rem;
+                            display: none;
+                            opacity: 0;
+                            transition: 0.3s ease-in-out;
+                        }
+
+                        &:hover {
+                            &::before {
+                                display: block;
+                                opacity: 1;
+                            }
+                        }
+
+                        &.completed {
+                            padding-left: 0.5rem;
+                            border-left: 1px solid $color_checked;
+                            color: $color_success;
+
+                            &::before {
+                                content: "Дата выполнения";
+                            }
+                        }
+                    }
+
+                    svg {
+                        fill: $color_warning;
+                    }
+                }
+
+                &-add {
+                    svg {
+                        width: 1.125rem;
+                        height: 1.125rem;
+                        opacity: 0;
+
+                        &:hover {
+                            fill: $color_success;
+                        }
+                    }
+                }
+
+                &-edit {
+                    svg {
+                        width: 1rem;
+                        height: 1rem;
+                        opacity: 0;
+                        fill: $color_warning;
+
+                        &:last-child {
+                            fill: $color_error;
+                            margin-left: 0.2rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// === SectionName ===

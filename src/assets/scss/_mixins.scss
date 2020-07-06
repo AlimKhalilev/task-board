@@ -1,0 +1,71 @@
+// === Mixins [ Шаблоны классов стилей, используемых на всех страницах ]===
+
+@mixin boxShadow {
+    box-shadow: 0.625rem 0.625rem 0.3rem 0px rgba(0,0,0,0.4);
+}
+
+@mixin boxShadowHover {
+    box-shadow: 1rem 1rem 0.3rem 0px rgba(0,0,0,0.4);
+}
+
+@mixin boxShadowItem {
+    box-shadow: 0.625rem 0.625rem 0.625rem -0.25rem rgba(15,15,15,1);
+}
+
+@mixin boxShadowItemHover {
+    box-shadow: 1rem 1rem 0.625rem -0.35rem rgba(15,15,15,1);
+}
+
+html, body {
+    font-family: 'Comfortaa', cursive;
+    font-size: 16px;
+    background-color: $color_bg_main;
+    color: #fff;
+
+    @media ($media_xl) {
+        font-size: 14px;
+    }
+}
+
+svg {
+    fill: $color_main;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+input {
+    outline: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    background: transparent;
+    border: 1px solid $color_checked;
+    padding: 0.8rem 1rem;
+    transition: 0.3s ease-in-out;
+    font-family: 'Comfortaa', cursive;
+
+    &::placeholder {
+        color: rgb(166, 170, 189);
+    }
+
+    &[type="submit"] {
+        background-color: $color_checked;
+        padding: 0.8rem;
+        cursor: pointer;
+        @include boxShadowItem;
+        border: none;
+
+        &:hover {
+            transform: translate(-0.15rem, -0.15rem);
+            @include boxShadowItemHover;
+        }
+    }
+
+    &:not(:last-child) {
+        margin-bottom: 1.2rem;
+    }
+}
+
+// === / Mixins ===

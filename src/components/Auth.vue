@@ -20,10 +20,11 @@
 </template>
 
 <style lang="scss">
-
+    @import '../assets/scss/reg-auth';
 </style>
 
 <script>
+import cookie from '@/components/Cookie.vue'
 import axios from 'axios'
 export default {
     data() {
@@ -35,6 +36,10 @@ export default {
     },
     methods: {
         sendAuth() {
+            if (this.login == "" || this.password == "") { // проверка на заполненность полей
+                this.validateMsg = 'Заполните все поля!';
+                return 0;
+            }
             axios // запрос на авторизацию
                 .post("https://files.thechampguess.ru/taskboard.php", {
                     type: "sendAuth",
@@ -43,8 +48,8 @@ export default {
                 })
                 .then(response => {
                     if (response.data) { // если учетки нет
-                        this.setCookie("login", this.login, 7);
-                        this.setCookie("_ym_gflne", response.data, 7);
+                        cookie.setCookie("login", this.login, 7);
+                        cookie.setCookie("_ym_gflne", response.data, 7);
                         this.$emit("openAuth", 1); // зарегались
                     }
                     else { // если учетка есть
@@ -54,12 +59,6 @@ export default {
                 }
                 )
                 .catch(error => console.log(error));
-        },
-        setCookie(cname, cvalue, exdays) {
-            var d = new Date();
-            d.setTime(d.getTime() + (exdays*24*60*60*1000));
-            var expires = "expires="+ d.toUTCString();
-            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
         }
     }
 }
