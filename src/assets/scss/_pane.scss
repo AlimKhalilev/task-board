@@ -1,0 +1,75 @@
+@import "normalize";
+@import "colors";
+@import "grid";
+@import "mixins";
+//@import "animate";
+
+.section-main {
+    &-pane {
+        margin-right: 2rem;
+        background-color: $color_bg_card;
+        min-height: calc(100vh - (2rem * 2) - 3.5rem);
+        position: fixed;
+        @include boxShadow;
+        min-width: 300px;
+
+        position: sticky;
+        top: 2rem;
+        height: calc(100vh - 4rem);
+
+        display: flex;
+        flex-direction: column;
+
+        .account {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: $color_checked;
+            padding: 1.4rem 1.5rem;
+
+            &-name {
+                display: flex;
+                align-items: center;
+                transition: 0.3s ease-in-out;
+                cursor: pointer;
+
+                span {
+                    margin-left: 0.5rem;
+                    padding-top: 0.2rem;
+                }
+
+                &:hover {
+                    color: $color_success;
+
+                    svg {
+                        fill: $color_success;
+                    }
+                }
+            }
+
+            &-links {
+                display: flex;
+
+                svg {    
+                    &:hover {
+                        fill: $color_success;
+                    }
+                }
+            }      
+        }
+
+        .items {
+            padding: 0 1.5rem;
+            margin: 1.5rem 0 auto 0;
+        }
+
+        .author {
+            padding: 1.5rem;
+
+            h4 {
+                text-align: center;
+                color: $color_success;
+            }
+        }
+    }
+}
