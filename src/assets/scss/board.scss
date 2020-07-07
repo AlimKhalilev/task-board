@@ -10,9 +10,40 @@
         grid-template-columns: 1fr 1fr 1fr 1fr;
         align-content: flex-start;
         gap: 2rem;
+        width: 100%;
+
+        &-empty {
+            grid-column-start: 2;
+            grid-column-end: 4;
+            min-height: calc(100vh - 4rem);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            h2 {
+                white-space: nowrap;
+                margin-bottom: 1rem;
+            }
+
+            h3 {
+                display: flex;
+                text-align: center;
+
+                svg {
+                    fill: $color_success;
+                    margin: 0 0.5rem;
+                }
+            }
+        }
 
         @media ($media_xl) {
             grid-template-columns: 1fr 1fr 1fr;
+
+            &-empty {
+                grid-column-start: 1;
+                grid-column-end: 4;
+            }
         }
     }
 }

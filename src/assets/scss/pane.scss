@@ -48,6 +48,10 @@
                     &:hover {
                         fill: $color_success;
                     }
+
+                    &:not(:last-child) {
+                        margin-right: 1rem;
+                    }
                 }
             }      
         }

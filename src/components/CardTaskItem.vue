@@ -1,7 +1,7 @@
 <template>
     <div class="card-container-items-item">
         <label class="card-container-items-item-text">
-            <input type="checkbox">
+            <input type="checkbox" v-model="taskInfo.complete">
             <span>{{ taskInfo.text }}</span>
         </label>
         <div class="card-container-items-item-edit">

@@ -2,11 +2,13 @@
     <div class="section-main-pane">
         <div class="account">
             <h4 class="account-name">
+
                 <svg><use xlink:href="../assets/main.svg#icon_user"></use></svg>
                 <span>{{ login }}</span>
             </h4>
-            <div class="account-links" @click="exitLogin">
-                <svg><use xlink:href="../assets/main.svg#icon_logout"></use></svg>
+            <div class="account-links">
+                <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg>
+                <svg @click="exitLogin"><use xlink:href="../assets/main.svg#icon_logout"></use></svg>
             </div>
         </div>
         <div class="items">
@@ -26,7 +28,7 @@ export default {
     data() {
         return {
             login: cookie.getCookie("login"),
-            author: "Task Board v1.0 by F.Champ"
+            author: "TaskBoard v1.0 by F.Champ"
         }
     },
     methods: {

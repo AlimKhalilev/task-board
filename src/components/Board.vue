@@ -3,6 +3,10 @@
         <div class="section-inner">
             <Pane @openAuth="openAuth" v-bind:mainData="mainData"/>
             <div class="section-main-cards">
+                <div v-if="mainData.length == 0" class="section-main-cards-empty">
+                    <h2>Добро пожаловать в TaskBoard!</h2>
+                    <h3>Добавьте свою первую запись, нажав на <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg> слева</h3>
+                </div>
                 <Card v-for="onceData in mainData" :key="onceData.id" v-bind:onceData="onceData"/>
             </div>
         </div>
@@ -15,7 +19,7 @@ import Card from '@/components/Card.vue'
 export default {
     data() {
         return {
-            mainData: [
+            mainData: [/*
                 {type: "note", info:
                     {
                         title: "Без тайтла",
@@ -42,7 +46,7 @@ export default {
                         tasksInfo: [
                             {
                                 text: "Пообедать",
-                                complete: false,
+                                complete: true,
                                 dateAdd: "24.03.2020",
                                 timeAdd: "13:52",
                                 dateComplete: "24.03.2020",
@@ -50,7 +54,7 @@ export default {
                             },
                             {
                                 text: "Отдохнуть",
-                                complete: false,
+                                complete: true,
                                 dateAdd: "24.03.2020",
                                 timeAdd: "13:52",
                                 dateComplete: "24.03.2020",
@@ -75,7 +79,7 @@ export default {
                         ]
                     }
                 }
-            ]
+            */]
         }
     },
     methods: {
