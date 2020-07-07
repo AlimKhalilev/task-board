@@ -2,14 +2,16 @@
     <section class="section-outer section-main">
         <div class="section-inner">
             <Pane @openAuth="openAuth" v-bind:mainData="mainData"/>
-            <Cards/>
+            <div class="section-main-cards">
+                <Card v-for="onceData in mainData" :key="onceData.id" v-bind:onceData="onceData"/>
+            </div>
         </div>
     </section>
 </template>
 
 <script>
 import Pane from '@/components/Pane.vue'
-import Cards from '@/components/Cards.vue'
+import Card from '@/components/Card.vue'
 export default {
     data() {
         return {
@@ -61,6 +63,14 @@ export default {
                                 timeAdd: "13:52",
                                 dateComplete: "24.03.2020",
                                 timeComplete: "13:52",
+                            },
+                            {
+                                text: "Поиграть в футбол",
+                                complete: false,
+                                dateAdd: "24.03.2020",
+                                timeAdd: "13:52",
+                                dateComplete: "24.03.2020",
+                                timeComplete: "13:52",
                             }
                         ]
                     }
@@ -75,11 +85,7 @@ export default {
     },
     components: {
         Pane,
-        Cards
+        Card
     }
 }
 </script>
-
-<style lang="scss">
-    @import '../assets/scss/board';
-</style>

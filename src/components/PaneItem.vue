@@ -28,7 +28,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss">
-    @import '../assets/scss/pane-item';
-</style>

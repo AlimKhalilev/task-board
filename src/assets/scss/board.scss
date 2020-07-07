@@ -1,0 +1,18 @@
+.section-main {
+    margin: 2rem;
+
+    .section-inner {
+        display: flex;
+    }
+
+    &-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        align-content: flex-start;
+        gap: 2rem;
+
+        @media ($media_xl) {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+    }
+}

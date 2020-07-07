@@ -19,10 +19,6 @@
     </div>
 </template>
 
-<style lang="scss">
-    @import '../assets/scss/reg-auth';
-</style>
-
 <script>
 import cookie from '@/components/Cookie.vue'
 import axios from 'axios'

@@ -1,0 +1,151 @@
+.section-main-cards {
+    .card-container-items {
+        &-item {
+
+            &-text {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                cursor: pointer;
+                padding-top: 0.9rem;
+
+                input[type="checkbox"] {
+                    -webkit-appearance: none;
+                    width: 0;
+                    height: 0;
+                    visibility: hidden;
+                }
+
+                input[type="checkbox"]:checked ~ span::before {
+                    border-top: none;
+                    border-right: none;
+                    height: 0.7rem;
+                    width: 1.2rem;
+                    transform: rotate(-45deg);
+                    top: calc(50% - 0.7rem + 0.1rem);
+                    border-color: $color_success;
+                }
+
+                input[type="checkbox"]:checked ~ span {
+                    color: $color_checked;
+                    text-decoration: line-through;
+                }
+
+                // input[type="checkbox"]:checked ~ span::after {
+                //     transform: translateY(-50%) scaleX(1);
+                // }
+
+                span {
+                    position: relative;
+                    font-size: 0.9rem;
+                    line-height: 1.6;
+                    padding-left: calc(1.2rem + 0.8rem);
+                    transition: 0.3s ease-in-out;
+
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        height: 1rem;
+                        width: 1rem;
+                        border: 0.08rem solid $color_main;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        transition: 0.3s ease-in-out;
+                    }
+                }
+            }
+
+            &-edit {
+                display: flex;
+                flex-basis: 100%;
+                justify-content: flex-end;
+                margin: 0.2rem 0;
+                transition: 0.3s ease-in-out;
+                opacity: 0;
+
+                svg {
+                    width: 0.75rem;
+                    height: 0.75rem;
+                    fill: $color_warning;
+                    margin-left: 0.4rem;
+                }
+
+                &-date, &-links {
+                    display: flex;
+                    align-items: center;
+                }
+
+                &-date {
+                    padding-right: 0.3rem;
+                    border-right: 1px solid $color_checked;
+
+                    span {
+                        position: relative;
+                        font-size: 0.65rem;
+                        padding-top: 0.2rem;
+                        color: $color_warning;
+                        cursor: pointer;
+                        z-index: 1;
+
+                        &::before {
+                            width: 100%;
+                            content: "Дата добавления";
+                            background-color: black;
+                            color: $color_main;
+                            padding: 0.3rem 0.5rem;
+                            font-size: 0.6rem;
+                            position: absolute;
+                            left: 0;
+                            bottom: -2.2rem;
+                            display: none;
+                        }
+
+                        &:hover {
+                            &::before {
+                                display: block;
+                                opacity: 1;
+                            }
+                        }
+
+                        &.completed {
+                            padding-right: 0.3rem;
+                            margin-right: 0.3rem;
+                            border-right: 1px solid $color_checked;
+                            color: $color_success;
+
+                            &::before {
+                                content: "Дата выполнения";
+                            }
+                        }
+                    }
+
+                    svg {
+                        fill: $color_warning;
+                    }
+                }
+
+                &-links {
+
+                    svg {
+
+                        &:last-child {
+                            fill: $color_error;
+                        }
+                    }
+                }
+            }
+
+            &:not(:last-child) {
+                margin-bottom: 0.7rem;
+                border-bottom: 1px solid $color_checked;
+            }
+
+            &:hover {
+                .card-container-items-item-edit {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

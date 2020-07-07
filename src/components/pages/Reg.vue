@@ -23,10 +23,6 @@
     </div>
 </template>
 
-<style lang="scss">
-	@import '../../assets/scss/reg-auth';
-</style>
-
 <script>
 import axios from 'axios';
 export default {
