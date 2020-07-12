@@ -2,8 +2,11 @@
     <div class="card">
 
         <div class="card-header">
-            <h3>{{ onceData.info.title }}</h3>
-            <div class="card-header-links">
+
+            <input placeholder="Название записи" type="text" v-if="onceData.edit" v-model="title">
+            <h3 v-else>{{ title }}</h3>
+
+            <div class="card-header-links" v-if="!onceData.edit">
                 <svg><use xlink:href="../assets/main.svg#icon_window_max"></use></svg>
             </div>
         </div>
@@ -11,19 +14,24 @@
         <div class="card-container">
             <div class="card-container-items">
                 <div class="card-container-items-content">
-                    <span>{{ onceData.info.text }}</span>
+                    <textarea placeholder="Текст записи" type="text" v-if="onceData.edit" v-model="text"></textarea>
+                    <span v-else>{{ text }}</span>
                 </div>
             </div>
         </div>
 
         <div class="card-footer">
+            <!-- <div class="card-footer-checkbox" v-if="onceData.edit">
+                <button @click="updateCard">Сохранить</button>
+            </div> -->
             <div class="card-footer-date">
                 <svg><use xlink:href="../assets/main.svg#icon_calendar"></use></svg>
                 <span>{{ onceData.info.date }} / {{ onceData.info.time }}</span>
             </div>
             <div class="card-footer-edit">
-                <svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg>
-                <svg><use xlink:href="../assets/main.svg#icon_close"></use></svg>
+                <svg v-if="!onceData.edit" @click="editMode"><use xlink:href="../assets/main.svg#icon_pencil"></use></svg>
+                <svg v-if="!onceData.edit" @click="deleteMode"><use xlink:href="../assets/main.svg#icon_close"></use></svg>
+                <span v-if="onceData.edit" @click="updateCard" data-label="checkbox"></span>
             </div>
         </div>
 
@@ -35,8 +43,20 @@ export default {
     props: ["onceData"],
     data() {
         return {
-
+            text: this.onceData.info.text,
+            title: this.onceData.info.title,
         }
+    },
+    methods: {
+        updateCard() {
+            this.$emit("updateCard", "note", "add", this.onceData.id, this.title, this.text, 0, false);
+        },
+        editMode() {
+            this.$emit("updateCard", "note", "edit", this.onceData.id, this.title, this.text, 0, false);
+        },
+        deleteMode() {
+            this.$emit("updateCard", "note", "delete", this.onceData.id, this.title, this.text, 0, false);
+        },
     }
 }
 </script>

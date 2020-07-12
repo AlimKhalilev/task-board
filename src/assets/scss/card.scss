@@ -25,6 +25,11 @@
             h3 {
                 font-size: 1.3rem;
             }
+
+            input {
+                border: 1px solid $color_card_title_input;
+                width: 100%;
+            }
         }
 
         &-container {
@@ -35,9 +40,14 @@
                 &-content {
                     padding: 0.8rem 0;
 
-                    span {
+                    span, textarea {
                         font-size: 0.9rem;
                         line-height: 1.6;
+                    }
+
+                    textarea {
+                        width: 100%;
+                        resize: none;
                     }
                 }
             }
@@ -49,8 +59,20 @@
             justify-content: space-between;
             align-items: center;
 
+            &-checkbox {
+                display: flex;
+                justify-content: flex-end;
+                width: 100%;
+
+                button {
+                    width: 100%;
+                    margin-bottom: 0.7rem;
+                }
+            }
+
             &-date {
                 display: flex;
+                flex-wrap: wrap;
                 align-items: center;
                 color: $color_warning;
 
@@ -82,10 +104,13 @@
                         }
                     }
 
-                    &.completed {
+                    &.completed { // !!!!!!!!!!!!
+                        display: none;
+
                         padding-left: 0.5rem;
                         border-left: 1px solid $color_checked;
                         color: $color_success;
+                        width: 100%;
 
                         &::before {
                             content: "Дата выполнения";
@@ -98,19 +123,52 @@
                 }
             }
 
-            &-add {
-                svg {
-                    width: 1.125rem;
-                    height: 1.125rem;
-                    opacity: 0;
-
-                    &:hover {
-                        fill: $color_success;
-                    }
+            &-add, &-edit {
+                span {
+                    border: 0.11rem solid $color_success;
+                    border-top: none;
+                    border-right: none;
+                    height: 0.7rem;
+                    width: 1.2rem;
+                    -webkit-transform: rotate(-45deg);
+                    transform: rotate(-45deg);
+                    margin: -0.5rem 0.1rem 0 0;
+                    cursor: pointer;
                 }
             }
 
+            &-add {
+                display: flex;
+
+                svg {
+                    width: 1rem;
+                    height: 1rem;
+                    opacity: 0;
+
+                    &:nth-child(1) {
+                        &:hover {
+                            fill: $color_success;
+                        }
+                    }
+                    &:nth-child(2) {
+                        fill: $color_warning;
+                        margin: 0 0.4rem;
+                    }
+                    &:nth-child(3) {
+                        fill: $color_error;
+                    }
+                }
+
+                span {
+                    margin: -0.5rem 0.1rem 0.3rem 0.7rem;
+                    transform-origin: 80% 100%;
+                }
+                
+            }
+
             &-edit {
+                display: flex;
+
                 svg {
                     width: 1rem;
                     height: 1rem;

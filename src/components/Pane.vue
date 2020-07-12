@@ -7,8 +7,16 @@
                 <span>{{ login }}</span>
             </h4>
             <div class="account-links">
-                <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg>
-                <svg @click="exitLogin"><use xlink:href="../assets/main.svg#icon_logout"></use></svg>
+                <div class="account-links-icon add_card">
+                    <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg>
+                    <div class="account-links-icon-dropdown">
+                        <span @click="addCard('task')">Добавить задачу</span>
+                        <span @click="addCard('note')">Добавить запись</span>
+                    </div>
+                </div>
+                <div class="account-links-icon">
+                    <svg @click="exitLogin"><use xlink:href="../assets/main.svg#icon_logout"></use></svg>
+                </div>
             </div>
         </div>
         <div class="items">
@@ -36,6 +44,9 @@ export default {
             cookie.deleteCookie("login");
             cookie.deleteCookie("_ym_gflne");
             this.$emit("openAuth", 0); // кидаем на авторизацию
+        },
+        addCard(method) {
+            this.$emit("addCard", method);
         }
     },
     components: {

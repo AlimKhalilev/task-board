@@ -1,6 +1,6 @@
 <template>
-    <CardNote v-if="onceData.type == 'note'" v-bind:onceData="onceData"/>
-    <CardTask v-else v-bind:onceData="onceData"/>
+    <CardNote @updateCard="updateCard" v-if="onceData.type == 'note'" v-bind:onceData="onceData"/>
+    <CardTask @updateCard="updateCard" v-else v-bind:onceData="onceData"/>
 </template>
 
 <script>
@@ -11,6 +11,11 @@ export default {
     data() {
         return {
 
+        }
+    },
+    methods: {
+        updateCard(type, mode, id, title, text, taskid, complete) {
+            this.$emit("updateCard", type, mode, id, title, text, taskid, complete);
         }
     },
     components: {

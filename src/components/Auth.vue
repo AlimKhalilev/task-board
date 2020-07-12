@@ -30,6 +30,9 @@ export default {
             validateMsg: ""
         }
     },
+    mounted() {
+        document.title = "Авторизация - TaskBoard"
+    },
     methods: {
         sendAuth() {
             if (this.login == "" || this.password == "") { // проверка на заполненность полей

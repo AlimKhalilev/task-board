@@ -44,13 +44,54 @@
             &-links {
                 display: flex;
 
-                svg {    
-                    &:hover {
-                        fill: $color_success;
+                &-icon {
+                    position: relative;
+                    display: flex;
+    
+                    svg {    
+                        &:hover {
+                            fill: $color_success;
+                        }
                     }
 
-                    &:not(:last-child) {
+                    &.add_card {
                         margin-right: 1rem;
+
+                        &:hover {
+                            .account-links-icon-dropdown {
+                                visibility: visible;
+                                opacity: 1;
+                            }
+                        }
+                    }
+    
+                    &-dropdown {
+                        position: absolute;
+                        display: flex;
+                        flex-direction: column;
+                        top: 150%;
+                        right: 0;
+                        background-color: $color_bg_main;
+
+                        visibility: hidden;
+                        opacity: 0;
+                        transition: 0.3s ease-in-out;
+
+                        span {
+                            font-size: 0.8rem;
+                            white-space: nowrap;
+                            padding: 1rem 0.8rem;
+                            transition: 0.3s ease-in-out;
+                            cursor: pointer;
+
+                            &:hover {
+                                color: $color_success;
+                            }
+
+                            &:first-child {
+                                border-bottom: 1px solid $color_bg_card;
+                            }
+                        }
                     }
                 }
             }      

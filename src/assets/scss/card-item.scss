@@ -35,6 +35,11 @@
                 //     transform: translateY(-50%) scaleX(1);
                 // }
 
+                textarea {
+                    width: 100%;
+                    resize: none;
+                }
+
                 span {
                     position: relative;
                     font-size: 0.9rem;
@@ -89,7 +94,6 @@
                         z-index: 1;
 
                         &::before {
-                            width: 100%;
                             content: "Дата добавления";
                             background-color: black;
                             color: $color_main;
@@ -132,6 +136,18 @@
                         &:last-child {
                             fill: $color_error;
                         }
+                    }
+
+                    span {
+                        border: 0.11rem solid $color_success;
+                        border-top: none;
+                        border-right: none;
+                        height: 0.7rem;
+                        width: 1.2rem;
+                        transform-origin: 70% 70%;
+                        transform: rotate(-45deg) scale(0.7);
+                        margin: -0.5rem 0.1rem 0.3rem 0;
+                        cursor: pointer;
                     }
                 }
             }

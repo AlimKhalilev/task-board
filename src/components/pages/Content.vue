@@ -16,8 +16,6 @@ export default {
         }
     },
     mounted() {
-        document.title = "Главная - TaskBoard"
-
         if (cookie.getCookie("login") == "" || cookie.getCookie("_ym_gflne") == "") {
             this.isAuth = 0; // кидаем на авторизацию
         }

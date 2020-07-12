@@ -36,6 +36,11 @@ npm install sass-loader node-sass style-loader --save-dev
 npm install axios
 ```
 
+### Подключение dateformat
+```
+npm install dateformat
+```
+
 ### Вставка в шаблон .vue
 ```
 import axios from 'axios'

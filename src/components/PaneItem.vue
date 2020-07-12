@@ -1,8 +1,11 @@
 <template>
-    <div class="items-item">
+    <div class="items-item" v-if="onceData.info.title != ''">
         <h4 class="items-item-text">{{ onceData.info.title }}</h4>
         <span 
-            v-if="onceData.type == 'task'" class="items-item-stat">{{ getTaskComplete(onceData.info.tasksInfo) }} / {{ onceData.info.tasksInfo.length }}
+            v-if="onceData.type == 'task'" 
+            class="items-item-stat" 
+            v-bind:class="{ completed: getTaskComplete(onceData.info.tasksInfo) == onceData.info.tasksInfo.length}">
+            {{ getTaskComplete(onceData.info.tasksInfo) }} / {{ onceData.info.tasksInfo.length }}
         </span>
     </div>
 </template>
