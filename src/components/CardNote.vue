@@ -49,14 +49,22 @@ export default {
     },
     methods: {
         updateCard() {
-            this.$emit("updateCard", "note", "add", this.onceData.id, this.title, this.text, 0, false);
+            if (!this.title) { // пустая строка ложь и наоборот
+                alert("Заполните поле названия записи")
+            }
+            if (this.title && !this.text) {
+                alert("Заполните поле текста записи")
+            }
+            if (this.title && this.text) {
+                this.$emit("updateCard", "note", "update", this.onceData.id, this.title, this.text, 0, false);
+            }
         },
         editMode() {
             this.$emit("updateCard", "note", "edit", this.onceData.id, this.title, this.text, 0, false);
         },
         deleteMode() {
             this.$emit("updateCard", "note", "delete", this.onceData.id, this.title, this.text, 0, false);
-        },
+        }
     }
 }
 </script>

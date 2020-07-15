@@ -4,6 +4,7 @@
         transition: 0.3s ease-in-out;
         @include boxShadow;
         align-self: flex-start;
+        max-width: 350px;
 
         &:hover {
             background-color: darken($color_bg_card, 2);
@@ -27,6 +28,9 @@
             }
 
             input {
+                padding: 0.3rem 0.5rem;
+                line-height: 1.6;
+                font-size: 0.9rem;
                 border: 1px solid $color_card_title_input;
                 width: 100%;
             }
@@ -41,11 +45,13 @@
                     padding: 0.8rem 0;
 
                     span, textarea {
+                        overflow-wrap: break-word;
                         font-size: 0.9rem;
                         line-height: 1.6;
                     }
 
                     textarea {
+                        padding: 0.3rem 0.5rem;
                         width: 100%;
                         resize: none;
                     }

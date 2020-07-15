@@ -77,16 +77,13 @@ export default {
                     mail: this.mail,
                 })
                 .then(response => {
-                    if (!response.data) {
-                        console.log("Empty data"); // пустое значение из API
-                    }
-                    else if (response.data == "success"){
+                    if (response.data.status) { // если успешная запись в БД из API
                         this.validateMsg = 'Вы успешно <br>зарегистрировались!';
                         this.successReg = true;
-
-                        setTimeout(function() {
-                            this.$router.push({path: '/'}) // переход на главную страницу через 2 сек
-                        }, 2000)
+                        setTimeout(() => this.$router.push({path: '/'}), 2000); // переход на главную страницу через 2 сек
+                    }
+                    else{
+                        console.log("Empty data"); // пустое значение из API
                     }
                 }
                 )

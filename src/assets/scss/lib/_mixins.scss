@@ -70,4 +70,25 @@ button, input[type="submit"] {
     }
 }
 
+/* width */
+::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: lighten($color_card_title_input, 5%);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: $color_checked; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    background: lighten($color_bg_main, 10%); 
+}
+
 // === / Mixins ===

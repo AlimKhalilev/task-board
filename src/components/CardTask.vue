@@ -3,7 +3,7 @@
 
         <div class="card-header">
 
-            <input placeholder="Название записи" type="text" v-if="onceData.edit" v-model="title">
+            <input placeholder="Название задачи" type="text" v-if="onceData.edit" v-model="title">
             <h3 v-else>{{ title }}</h3>
 
             <div class="card-header-links" v-if="!onceData.edit">
@@ -53,7 +53,12 @@ export default {
             this.$emit("updateCard", type, mode, id, title, text, taskid, complete);
         },
         updateCard() {
-            this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
+            if (!this.title) {
+                alert("Заполните поле названия задачи")
+            }
+            else {
+                this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
+            }
         },
         editMode() {
             this.$emit("updateCard", "task", "edit", this.onceData.id, this.title, this.text, 0, false);

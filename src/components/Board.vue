@@ -16,66 +16,44 @@
 <script>
 import Pane from '@/components/Pane.vue'
 import Card from '@/components/Card.vue'
+import cookie from '@/components/Cookie.vue'
 import moment from 'moment'
+import axios from 'axios'
 export default {
     data() {
         return {
-            //mainData: []
-            mainData: [
-                {id:12414112, type: "note", edit: false, info:
-                    {
-                        title: "Без тайтла",
-                        text: "Привет, сегодня хорошая погода, вот бы доделать TaskBoard..",
-                        date: "24.03.20",
-                        time: "13:47"
-                    }
-                },
-                {id:7684349, type: "task", edit: false, info:
-                    {
-                        title: "Первые задачи",
-                        dateAdd: "24.03.20",
-                        timeAdd: "13:52",
-                        dateComplete: "24.03.20",
-                        timeComplete: "13:52",
-                        tasksInfo: [
-                            {
-                                id: 55684349,
-                                text: "Пообедать",
-                                complete: true,
-                                dateAdd: "24.03.20",
-                                timeAdd: "13:52",
-                                dateComplete: "24.03.20",
-                                timeComplete: "13:52",
-                                edit: false
-                            },
-                            {
-                                id: 55684312,
-                                text: "Отдохнуть",
-                                complete: false,
-                                dateAdd: "24.03.20",
-                                timeAdd: "13:52",
-                                dateComplete: "24.03.20",
-                                timeComplete: "13:52",
-                                edit: false
-                            }
-                        ]
-                    }
-                }
-            ]
+            maxCardID: 0,
+            mainData: []
         }
     },
     mounted() {
         document.title = "Главная - TaskBoard"
+
+        axios // запрос на получшение всех карточек из бд
+            .post("https://files.thechampguess.ru/taskboard.php", {
+                type: "getAllCards",
+                login: cookie.getCookie("login")
+            })
+            .then(response => {
+                if (response.data) {
+                    this.mainData = response.data;
+                    this.maxCardID = Number(this.mainData[this.mainData.length-1].id);
+                }
+                else {
+                    console.log("Data error");
+                }
+            })
+            .catch(error => console.log(error));
+
     },
     methods: {
         openAuth() {
             this.$emit("openAuth", 0); // кидаем на авторизацию
         },
         addCard(method) {
-            //console.log(method, Date.now());
             if (method == "note") { // если запись
                 this.mainData.push(
-                    {id:Date.now(), type: "note", edit: true, info:
+                    {id: this.getNewCardId(), type: "note", edit: true, info: // устанавливаем временный id для карты
                         {
                             title: "",
                             text: "",
@@ -115,18 +93,63 @@ export default {
             let index = this.getIndexDataById(id) // получаем index по id
             if (index != -1) {
                 if (type == "note") { // действия с записями
-                    if (mode == "add") {
-                        this.mainData[index].edit = false;
-                        this.mainData[index].info.title = title;
-                        this.mainData[index].info.text = text;
-                        this.mainData[index].info.date = moment().format('DD.MM.YY');
-                        this.mainData[index].info.time = moment().format('HH:mm');
+                    if (mode == "update") {
+
+                        if (this.mainData[index].id > this.maxCardID) {
+                            console.log("Добавление")
+                        }
+                        else {
+                            console.log("Редактирование")
+                        }
+
+                        axios // запрос на обновление данных карточки в бд
+                            .post("https://files.thechampguess.ru/taskboard.php", {
+                                type: "updateCardNote",
+                                mode: (this.mainData[index].id > this.maxCardID ? "add" : "edit"),
+                                login: cookie.getCookie("login"),
+                                cardID: this.mainData[index].id,
+                                title: title,
+                                text: text
+                            })
+                            .then(response => {
+                                if (response.data) { // если обновление карточки
+                                    this.mainData[index].edit = false;
+                                    this.mainData[index].info.title = title;
+                                    this.mainData[index].info.text = text;
+                                    this.mainData[index].info.date = response.data.date;
+                                    this.mainData[index].info.time = response.data.time;
+
+                                    
+                                    if (response.data.id) { // если добавление карточки
+                                        this.mainData[index].id = response.data.id; // присвоить ключ, полученный с синхры api database
+                                    }
+                                }
+                                else {
+                                    console.log("Data error");
+                                }
+                            })
+                            .catch(error => console.log(error));
+
                     }
                     if (mode == "edit") {
                         this.mainData[index].edit = true;
                     }
                     if (mode == "delete") {
-                        this.mainData.splice(index, 1); // с index элемента удалить 1
+
+                        axios // запрос на удаление карточки из бд
+                            .post("https://files.thechampguess.ru/taskboard.php", {
+                                type: "deleteCardNote",
+                                cardID: this.mainData[index].id
+                            })
+                            .then(response => {
+                                if (response.data) { // если удаление успешно
+                                    this.mainData.splice(index, 1); // с index элемента удалить 1
+                                }
+                                else {
+                                    console.log("Data error");
+                                }
+                            })
+                            .catch(error => console.log(error));
                     }
                 }
                 else { // действия с задачей
@@ -205,6 +228,9 @@ export default {
                 }
             });
             return backId;
+        },
+        getNewCardId() { // получение нового id для новой карточки
+            return (!this.mainData.length ? 1 : Number(this.mainData[this.mainData.length-1].id) + 1);
         }
     },
     components: {
@@ -212,4 +238,70 @@ export default {
         Card
     }
 }
+
+
+/*
+----- Запрос на получение всей инфы --------
+
+SELECT CardID AS ID, title, text, date, time FROM `note` WHERE cardID IN(
+	SELECT ID FROM `cards` WHERE owner = (
+		SELECT ID FROM `users` WHERE `login` = 'formys'   
+	)
+)
+
+-------- Запрос для добавления карточки NOTE
+
+START TRANSACTION;
+SELECT @cardID:=MAX(cards.ID)+1, @noteID:=MAX(note.ID)+1 FROM `cards`, `note`;
+INSERT INTO `cards` (`ID`, `owner`, `type`) VALUES (@cardID, (SELECT ID FROM `users` WHERE `login`='formys'), 1);
+INSERT INTO `note`(`ID`, `cardID`, `title`, `text`, `date`, `time`) VALUES (@noteID, @cardID, 'title', 'text', '2020-07-14', '21:01:00');
+COMMIT;
+
+*/
+
+
+            /* mainData: [
+                {id:12414112, type: "note", edit: false, info:
+                    {
+                        title: "Без тайтла",
+                        text: "Привет, сегодня хорошая погода, вот бы доделать TaskBoard..",
+                        date: "24.03.20",
+                        time: "13:47"
+                    }
+                },
+                {id:7684349, type: "task", edit: false, info:
+                    {
+                        title: "Первые задачи",
+                        dateAdd: "24.03.20",
+                        timeAdd: "13:52",
+                        dateComplete: "24.03.20",
+                        timeComplete: "13:52",
+                        tasksInfo: [
+                            {
+                                id: 55684349,
+                                text: "Пообедать",
+                                complete: true,
+                                dateAdd: "24.03.20",
+                                timeAdd: "13:52",
+                                dateComplete: "24.03.20",
+                                timeComplete: "13:52",
+                                edit: false
+                            },
+                            {
+                                id: 55684312,
+                                text: "Отдохнуть",
+                                complete: false,
+                                dateAdd: "24.03.20",
+                                timeAdd: "13:52",
+                                dateComplete: "24.03.20",
+                                timeComplete: "13:52",
+                                edit: false
+                            }
+                        ]
+                    }
+                }
+            ]
+            */
+
+
 </script>

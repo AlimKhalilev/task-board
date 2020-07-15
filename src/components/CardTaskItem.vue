@@ -3,7 +3,7 @@
         <label class="card-container-items-item-text">
             <input @change="sendComplete" type="checkbox" v-model="complete" :disabled="complete" v-if="!taskInfo.edit">
             <span v-if="!taskInfo.edit">{{ text }}</span>
-            <textarea placeholder="Текст записи" type="text" v-if="taskInfo.edit" v-model="text"></textarea>
+            <textarea placeholder="Текст задачи" type="text" v-if="taskInfo.edit" v-model="text"></textarea>
         </label>
         <div class="card-container-items-item-edit">
             <div class="card-container-items-item-edit-date">
@@ -31,16 +31,21 @@ export default {
     },
     methods: {
         addItem() {
-            this.$emit("updateCardItem", "task", "addItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается только текст
+            if (!this.text) {
+                alert("Заполните поле задачи");
+            }
+            else {
+                this.$emit("updateCardItem", "task", "addItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается только текст
+            }
         },
         editItem() {
-            this.$emit("updateCardItem", "task", "editItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается только текст
+            this.$emit("updateCardItem", "task", "editItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается edit true / false
         },
         deleteItem() {
-            this.$emit("updateCardItem", "task", "deleteItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается только текст
+            this.$emit("updateCardItem", "task", "deleteItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается delete mode
         },
         sendComplete() {
-            this.$emit("updateCardItem", "task", "sendComplete", this.cardId, "", this.text, this.taskInfo.id, this.complete); // передается только текст
+            this.$emit("updateCardItem", "task", "sendComplete", this.cardId, "", this.text, this.taskInfo.id, this.complete); // complete true/false
         }
     }
 }
