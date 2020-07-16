@@ -65,7 +65,7 @@ export default {
             }
             else { // если задача
                 this.mainData.push(
-                    {id:Date.now(), type: "task", edit: true, info:
+                    {id:this.getNewCardId(), type: "task", edit: true, info:
                         {
                             title: "",
                             dateAdd: moment().format('DD.MM.YY'),
@@ -95,12 +95,12 @@ export default {
                 if (type == "note") { // действия с записями
                     if (mode == "update") {
 
-                        if (this.mainData[index].id > this.maxCardID) {
-                            console.log("Добавление")
-                        }
-                        else {
-                            console.log("Редактирование")
-                        }
+                        // if (this.mainData[index].id > this.maxCardID) {
+                        //     console.log("Добавление")
+                        // }
+                        // else {
+                        //     console.log("Редактирование")
+                        // }
 
                         axios // запрос на обновление данных карточки в бд
                             .post("https://files.thechampguess.ru/taskboard.php", {
@@ -153,19 +153,19 @@ export default {
                     }
                 }
                 else { // действия с задачей
-                    if (mode == "add") {
+                    if (mode == "add") { // добавление \ редактирование
                         this.mainData[index].edit = false;
                         this.mainData[index].info.title = title;
                         this.mainData[index].info.dateAdd = moment().format('DD.MM.YY');
                         this.mainData[index].info.timeAdd = moment().format('HH:mm');
                     }
-                    if (mode == "edit") {
+                    if (mode == "edit") { // включить редактирование
                         this.mainData[index].edit = true;
                     }
-                    if (mode == "delete") {
+                    if (mode == "delete") { // удаление
                         this.mainData.splice(index, 1); // с index элемента удалить 1
                     }
-                    if (mode == "newItem") {
+                    if (mode == "newItem") { // добавление нового пункта
                         this.mainData[index].info.tasksInfo.push(
                             {
                                 id: Date.now(),
@@ -193,7 +193,7 @@ export default {
                             if (mode == "deleteItem") {
                                 this.mainData[index].info.tasksInfo.splice(taskIndex, 1); // с taskIndex элемента удалить 1
                             }
-                            if (mode == "sendComplete") {
+                            if (mode == "sendComplete") { // когда чекбокс галочка
                                 this.mainData[index].info.tasksInfo[taskIndex].complete = complete;
                                 this.mainData[index].info.tasksInfo[taskIndex].dateComplete = moment().format('DD.MM.YY');
                                 this.mainData[index].info.tasksInfo[taskIndex].timeComplete = moment().format('HH:mm');
@@ -241,19 +241,34 @@ export default {
 
 
 /*
------ Запрос на получение всей инфы --------
+----- Запрос на получение всей инфы (из таблицы NOTE) --------
 
 SELECT CardID AS ID, title, text, date, time FROM `note` WHERE cardID IN(
 	SELECT ID FROM `cards` WHERE owner = (
-		SELECT ID FROM `users` WHERE `login` = 'formys'   
+		SELECT ID FROM `users` WHERE `login` = '$login'   
 	)
 )
+
+-------- Запрос на получение инфы из всех карточек (NOTE, TASK)
+
+SELECT cardID AS ID, type, title, text, date AS dateAdd, time AS timeAdd, date AS dateEnd, time AS timeEnd FROM `note`, `cards` WHERE cardID IN(
+	SELECT ID FROM `cards` WHERE owner = (
+		SELECT ID FROM `users` WHERE `login` = '$login'   
+	)
+) AND (cards.ID = note.ID) UNION ALL 
+
+SELECT cardID AS ID, type, title, title AS text, dateAdd, timeAdd, dateEnd, timeEnd FROM `task`, `cards` WHERE cardID IN(
+	SELECT ID FROM `cards` WHERE owner = (
+		SELECT ID FROM `users` WHERE `login` = '$login'   
+	)
+) AND (cards.ID = task.cardID) ORDER BY ID
+
 
 -------- Запрос для добавления карточки NOTE
 
 START TRANSACTION;
 SELECT @cardID:=MAX(cards.ID)+1, @noteID:=MAX(note.ID)+1 FROM `cards`, `note`;
-INSERT INTO `cards` (`ID`, `owner`, `type`) VALUES (@cardID, (SELECT ID FROM `users` WHERE `login`='formys'), 1);
+INSERT INTO `cards` (`ID`, `owner`, `type`) VALUES (@cardID, (SELECT ID FROM `users` WHERE `login`='$login'), 1);
 INSERT INTO `note`(`ID`, `cardID`, `title`, `text`, `date`, `time`) VALUES (@noteID, @cardID, 'title', 'text', '2020-07-14', '21:01:00');
 COMMIT;
 
