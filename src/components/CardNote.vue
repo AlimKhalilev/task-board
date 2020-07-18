@@ -26,7 +26,9 @@
             </div> -->
             <div class="card-footer-date">
                 <svg><use xlink:href="../assets/main.svg#icon_calendar"></use></svg>
-                <span>{{ onceData.info.date }} / {{ onceData.info.time }}</span>
+                <div class="card-footer-date-clock clock-once">
+                    <span>{{ onceData.info.date }} / {{ onceData.info.time }}</span>
+                </div>
             </div>
             <div class="card-footer-edit">
                 <svg v-if="!onceData.edit" @click="editMode"><use xlink:href="../assets/main.svg#icon_pencil"></use></svg>

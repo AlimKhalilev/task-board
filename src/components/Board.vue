@@ -23,6 +23,7 @@ export default {
     data() {
         return {
             maxCardID: 0,
+            maxTaskID: 0,
             mainData: []
         }
     },
@@ -38,6 +39,7 @@ export default {
                 if (response.data) {
                     this.mainData = response.data;
                     this.maxCardID = Number(this.mainData[this.mainData.length-1].id);
+                    this.maxTaskID = this.getMaxTaskId();
                 }
                 else {
                     console.log("Data error");
@@ -70,17 +72,17 @@ export default {
                             title: "",
                             dateAdd: moment().format('DD.MM.YY'),
                             timeAdd: moment().format('HH:mm'),
-                            dateComplete: "**.**.**",
-                            timeComplete: "**:**",
+                            dateComplete: "",
+                            timeComplete: "",
                             tasksInfo: [
                                 {
-                                    id: Date.now(),
+                                    id: this.getMaxTaskId() + 1,
                                     text: "",
                                     complete: false,
                                     dateAdd: moment().format('DD.MM.YY'),
                                     timeAdd: moment().format('HH:mm'),
-                                    dateComplete: "**.**.**",
-                                    timeComplete: "**:**",
+                                    dateComplete: "",
+                                    timeComplete: "",
                                     edit: true
                                 }
                             ]
@@ -116,12 +118,14 @@ export default {
                                     this.mainData[index].edit = false;
                                     this.mainData[index].info.title = title;
                                     this.mainData[index].info.text = text;
-                                    this.mainData[index].info.date = response.data.date;
-                                    this.mainData[index].info.time = response.data.time;
-
+                                    //this.mainData[index].info.date = response.data.date; // если в ред. надо обновлять дату и время
+                                    //this.mainData[index].info.time = response.data.time;
                                     
                                     if (response.data.id) { // если добавление карточки
+                                        this.maxCardID = response.data.id;
                                         this.mainData[index].id = response.data.id; // присвоить ключ, полученный с синхры api database
+                                        this.mainData[index].info.date = response.data.date;
+                                        this.mainData[index].info.time = response.data.time;
                                     }
                                 }
                                 else {
@@ -153,28 +157,59 @@ export default {
                     }
                 }
                 else { // действия с задачей
-                    if (mode == "add") { // добавление \ редактирование
-                        this.mainData[index].edit = false;
-                        this.mainData[index].info.title = title;
-                        this.mainData[index].info.dateAdd = moment().format('DD.MM.YY');
-                        this.mainData[index].info.timeAdd = moment().format('HH:mm');
+                    //console.log(mode, taskid, (this.mainData[index].id > this.maxCardID ? "addTask" : "editTask"));
+                    //console.log((this.mainData[index].id > this.maxCardID ? "addTask" : "editTask"))
+                    if (mode == "add") {
+                        mode = (this.mainData[index].id > this.maxCardID ? "addTask" : "editTask");
+                    }
+                    if (mode == "addTask" || mode == "editTask" || mode == "delete") {
+                        axios // запрос на обновление данных Task Item
+                            .post("https://files.thechampguess.ru/taskboard.php", {
+                                type: "updateTask",
+                                mode: mode,
+                                login: cookie.getCookie("login"),
+                                cardID: this.mainData[index].id,
+                                title: title
+                            })
+                            .then(response => {
+                                if (response.data) { // если обновление карточки
+                                    console.log(mode);
+
+                                    if (response.data.delete) { // удаление task
+                                        this.mainData.splice(index, 1); // с index элемента удалить 1
+                                    }
+
+                                    if (response.data.edit) { // редактирование task
+                                        this.mainData[index].edit = false;
+                                        this.mainData[index].info.title = title;
+
+                                        if (response.data.id) { // если добавление task
+                                            this.maxCardID = response.data.id;
+                                            this.mainData[index].id = response.data.id; // присвоить ключ, полученный с синхры api database
+                                            this.mainData[index].info.dateAdd = response.data.date;
+                                            this.mainData[index].info.timeAdd = response.data.time;
+                                        }
+                                    }
+                                }
+                                else {
+                                    console.log("Data error");
+                                }
+                            })
+                            .catch(error => console.log(error));
                     }
                     if (mode == "edit") { // включить редактирование
                         this.mainData[index].edit = true;
                     }
-                    if (mode == "delete") { // удаление
-                        this.mainData.splice(index, 1); // с index элемента удалить 1
-                    }
                     if (mode == "newItem") { // добавление нового пункта
                         this.mainData[index].info.tasksInfo.push(
                             {
-                                id: Date.now(),
+                                id: Date.now(), // дабы исключить совпадающие ключи
                                 text: "",
                                 complete: false,
                                 dateAdd: moment().format('DD.MM.YY'),
                                 timeAdd: moment().format('HH:mm'),
-                                dateComplete: "**.**.**",
-                                timeComplete: "**:**",
+                                dateComplete: "",
+                                timeComplete: "",
                                 edit: true
                             }
                         )
@@ -183,20 +218,73 @@ export default {
                     if (taskid) { // если действия с task item'a
                         let taskIndex = this.getTaskIndexDataById(index, taskid)
                         if (taskIndex != -1) {
+                            let mainTaskData = this.mainData[index].info.tasksInfo[taskIndex];
                             if (mode == "addItem") {
-                                this.mainData[index].info.tasksInfo[taskIndex].text = text;
-                                this.mainData[index].info.tasksInfo[taskIndex].edit = false;
+                                mode = (mainTaskData.id > this.maxTaskID ? "addTaskItem" : "editTaskItem"); // получение точной инфы из task item
                             }
-                            if (mode == "editItem") { 
+                            if (mode == "sendComplete" || mode == "addTaskItem" || mode == "editTaskItem" || mode == "deleteItem") { // если эдит или чекбокс
+                                if (mode == "sendComplete" && this.checkFullComplete(index)) {
+                                    mode = "sendCompleteFull";
+                                }
+                                if (mode == "deleteItem" && this.mainData[index].info.tasksInfo.length == 1) { // если удаляется пункт и он последний
+                                    mode = "deleteItemLast";
+                                }
+
+                                console.log(mode, taskIndex)
+                                
+                                axios // запрос на обновление данных Task Item
+                                    .post("https://files.thechampguess.ru/taskboard.php", {
+                                        type: "updateTaskItem",
+                                        mode: mode,
+                                        login: cookie.getCookie("login"),
+                                        cardID: this.mainData[index].id,
+                                        taskID: mainTaskData.id,
+                                        complete: complete,
+                                        text: text
+                                    })
+                                    .then(response => {
+                                        if (response.data) { // если обновление карточки
+
+                                            if (response.data.complete) { // если чекбокс
+                                                mainTaskData.complete = response.data.complete;
+                                                mainTaskData.dateComplete = response.data.date;
+                                                mainTaskData.timeComplete = response.data.time;
+
+                                                if (response.data.completeFull) { // если все пункты выполнены
+                                                    this.mainData[index].info.dateComplete = response.data.date;
+                                                    this.mainData[index].info.timeComplete = response.data.time;
+                                                }
+                                            }
+
+                                            if (response.data.delete) { // если удаление
+                                                this.mainData[index].info.tasksInfo.splice(taskIndex, 1); // с taskIndex элемента удалить 1
+                                            }
+
+                                            if (response.data.deleteLast) { // если удаляется последний элемент (удалить всю карточку)
+                                                this.mainData.splice(index, 1); // с index элемента удалить 1
+                                            }
+
+                                            if (response.data.edit) {
+                                                mainTaskData.text = text;
+                                                mainTaskData.edit = false;
+
+                                                if (response.data.id) { // если добавление task item
+                                                    this.maxTaskID = response.data.id;
+                                                    this.mainData[index].info.tasksInfo[taskIndex].id = response.data.id; // присвоить ключ, полученный с синхры api database
+                                                    mainTaskData.dateAdd = response.data.date;
+                                                    mainTaskData.timeAdd = response.data.time;
+                                                }
+                                            }
+                                            
+                                        }
+                                        else {
+                                            console.log("Data error");
+                                        }
+                                    })
+                                    .catch(error => console.log(error));
+                            }
+                            if (mode == "editItem") {
                                 this.mainData[index].info.tasksInfo[taskIndex].edit = true;
-                            }
-                            if (mode == "deleteItem") {
-                                this.mainData[index].info.tasksInfo.splice(taskIndex, 1); // с taskIndex элемента удалить 1
-                            }
-                            if (mode == "sendComplete") { // когда чекбокс галочка
-                                this.mainData[index].info.tasksInfo[taskIndex].complete = complete;
-                                this.mainData[index].info.tasksInfo[taskIndex].dateComplete = moment().format('DD.MM.YY');
-                                this.mainData[index].info.tasksInfo[taskIndex].timeComplete = moment().format('HH:mm');
                             }
                         }
                         else {
@@ -231,6 +319,38 @@ export default {
         },
         getNewCardId() { // получение нового id для новой карточки
             return (!this.mainData.length ? 1 : Number(this.mainData[this.mainData.length-1].id) + 1);
+        },
+        getMaxTaskId() {
+            let dataTaskCount = 0;
+            let dataCount = this.mainData.length;
+            let arrMax = [];
+
+            for (let i = dataCount-1; i >= 0; i--) { // перебор всех карточек
+                if (this.mainData[i].type == "task") { // останавливаемся на task card (перебор с конца)
+                    dataTaskCount = this.mainData[i].info.tasksInfo.length - 1
+                    if (dataTaskCount != -1) {
+                        arrMax.push(this.mainData[i].info.tasksInfo[dataTaskCount].id); // (возвращаем самый последний id)
+                    }
+                }
+            }
+            return (!arrMax ? 1 : Math.max.apply(null, arrMax));
+        },
+        checkFullComplete(index) {
+            let count = 0;
+            let checkData = this.mainData[index].info.tasksInfo;
+
+            for (let i = 0; i < checkData.length; i++) {
+                if (checkData[i].complete) {
+                    count++;
+                }
+            }
+
+            if (count == (checkData.length - 1)) {
+                return true
+            }
+            else {
+                return false;
+            }
         }
     },
     components: {

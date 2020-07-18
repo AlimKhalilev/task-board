@@ -7,7 +7,7 @@
         </label>
         <div class="card-container-items-item-edit">
             <div class="card-container-items-item-edit-date">
-                <span class="completed">{{ taskInfo.dateComplete }} / {{ taskInfo.timeComplete }}</span>
+                <span v-if="taskInfo.timeComplete != '00:00' && taskInfo.timeComplete != ''" class="completed">{{ taskInfo.dateComplete }} / {{ taskInfo.timeComplete }}</span>
                 <span>{{ taskInfo.dateAdd }} / {{ taskInfo.timeAdd }}</span>
                 <svg><use xlink:href="../assets/main.svg#icon_calendar"></use></svg>
             </div>
@@ -32,7 +32,7 @@ export default {
     methods: {
         addItem() {
             if (!this.text) {
-                alert("Заполните поле задачи");
+                alert("Заполните поле текста задачи");
             }
             else {
                 this.$emit("updateCardItem", "task", "addItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается только текст

@@ -82,50 +82,59 @@
                 align-items: center;
                 color: $color_warning;
 
-                span {
-                    position: relative;
-                    padding-top: 0.1rem;
-                    margin-left: 0.5rem;
-                    font-size: 0.8rem;
-                    cursor: pointer;
-
-                    &::before {
-                        content: "Дата добавления";
-                        background-color: black;
-                        color: $color_main;
-                        padding: 0.35rem 0.6rem;
-                        font-size: 0.7rem;
-                        position: absolute;
-                        left: 0;
-                        bottom: -2.5rem;
-                        display: none;
-                        opacity: 0;
-                        transition: 0.3s ease-in-out;
-                    }
-
-                    &:hover {
-                        &::before {
-                            display: block;
-                            opacity: 1;
-                        }
-                    }
-
-                    &.completed { // !!!!!!!!!!!!
-                        display: none;
-
-                        padding-left: 0.5rem;
-                        border-left: 1px solid $color_checked;
-                        color: $color_success;
-                        width: 100%;
-
-                        &::before {
-                            content: "Дата выполнения";
-                        }
-                    }
-                }
-
                 svg {
                     fill: $color_warning;
+                }
+
+                &-clock {
+
+                    &.clock-once {
+                        span {
+                            font-size: 0.8rem;
+                        }
+                    }
+
+                    span {
+                        position: relative;
+                        padding-top: 0.1rem;
+                        margin-left: 0.5rem;
+                        font-size: 0.67rem;
+                        cursor: pointer;
+    
+                        &::before {
+                            content: "Дата добавления";
+                            background-color: black;
+                            color: $color_main;
+                            padding: 0.35rem 0.6rem;
+                            font-size: 0.7rem;
+                            position: absolute;
+                            left: 0;
+                            bottom: -2.5rem;
+                            display: none;
+                            opacity: 0;
+                            transition: 0.3s ease-in-out;
+                        }
+    
+                        &:hover {
+                            &::before {
+                                display: block;
+                                opacity: 1;
+                            }
+                        }
+    
+                        &.completed { // !!!!!!!!!!!!
+                            //display: none;
+    
+                            padding-left: 0.5rem;
+                            border-left: 1px solid $color_checked;
+                            color: $color_success;
+                            width: 100%;
+    
+                            &::before {
+                                content: "Дата выполнения";
+                            }
+                        }
+                    }
                 }
             }
 
