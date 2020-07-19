@@ -42,6 +42,12 @@
                 border: 1px solid $color_card_title_input;
                 width: 100%;
             }
+
+            &-links {
+                svg {
+                    display: none;
+                }
+            }
         }
 
         &-container {

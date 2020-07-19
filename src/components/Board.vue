@@ -3,7 +3,7 @@
         <div class="section-inner">
             <Pane @openAuth="openAuth" @addCard="addCard" v-bind:mainData="mainData"/>
             <div class="section-main-cards">
-                <div v-if="mainData.length == 0" class="section-main-cards-empty">
+                <div v-if="isLoadData && mainData.length == 0" class="section-main-cards-empty">
                     <h2>Добро пожаловать в TaskBoard!</h2>
                     <h3>Добавьте свою первую запись, нажав на <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg> слева</h3>
                 </div>
@@ -22,6 +22,7 @@ import axios from 'axios'
 export default {
     data() {
         return {
+            isLoadData: false,
             maxCardID: 0,
             maxTaskID: 0,
             mainData: []
@@ -38,8 +39,11 @@ export default {
             .then(response => {
                 if (response.data) {
                     this.mainData = response.data;
-                    this.maxCardID = Number(this.mainData[this.mainData.length-1].id);
-                    this.maxTaskID = this.getMaxTaskId();
+                    if (this.mainData.length >= 1) { // уже есть карточки в бд
+                        this.maxCardID = Number(this.mainData[this.mainData.length-1].id);
+                        this.maxTaskID = this.getMaxTaskId();
+                    }
+                    this.isLoadData = true;
                 }
                 else {
                     console.log("Data error");
@@ -375,7 +379,7 @@ SELECT cardID AS ID, type, title, text, date AS dateAdd, time AS timeAdd, date A
 	SELECT ID FROM `cards` WHERE owner = (
 		SELECT ID FROM `users` WHERE `login` = '$login'   
 	)
-) AND (cards.ID = note.ID) UNION ALL 
+) AND (cards.ID = note.cardID) UNION ALL 
 
 SELECT cardID AS ID, type, title, title AS text, dateAdd, timeAdd, dateEnd, timeEnd FROM `task`, `cards` WHERE cardID IN(
 	SELECT ID FROM `cards` WHERE owner = (

@@ -45,3 +45,8 @@ npm install moment
 ```
 import axios from 'axios'
 ```
+
+### Работа с компонентом Slide (для шторки в моб.адаптиве)
+```
+npm install vue-slide-up-down
+```

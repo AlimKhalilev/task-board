@@ -54,7 +54,6 @@ export default {
             delay: 0,
             windowWidth: screen.width,
             menu: (screen.width <= 576 ? false : true),
-            isMobile: !this.menu,
             login: cookie.getCookie("login"),
             author: "TaskBoard v1.0 by F.Champ"
         }
@@ -70,11 +69,9 @@ export default {
         },
         addCard(method) {
             this.$emit("addCard", method);
-            if (this.isMobile) {
-                setTimeout(() => 
-                    document.getElementsByTagName("html")[0].scrollIntoView({behavior: "smooth", block: "end"}), 
-                50); // плавная прокрутка вниз
-            }
+            setTimeout(() => 
+                document.getElementsByTagName("html")[0].scrollIntoView({behavior: "smooth", block: "end"}), 
+            50); // плавная прокрутка вниз
         }
     },
     components: {
