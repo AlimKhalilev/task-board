@@ -3,6 +3,10 @@
 
     .section-inner {
         display: flex;
+
+        @media ($media_xs) {
+            flex-direction: column;
+        }
     }
 
     &-cards {
@@ -24,6 +28,14 @@
             h2 {
                 white-space: nowrap;
                 margin-bottom: 1rem;
+
+                @media ($media_sm) {
+                    white-space: normal;
+                    margin-bottom: 1.5rem;
+                    line-height: 1.6;
+                    text-align: center;
+                    font-size: 1.7rem;
+                }
             }
 
             h3 {
@@ -33,6 +45,12 @@
                 svg {
                     fill: $color_success;
                     margin: 0 0.5rem;
+                }
+
+                @media ($media_sm) {
+                    display: block;
+                    width: 80%;
+                    line-height: 1.8;
                 }
             }
         }
@@ -45,5 +63,26 @@
                 grid-column-end: 4;
             }
         }
+
+        @media ($media_lg) {
+            grid-template-columns: 1fr 1fr;
+
+            &-empty {
+                grid-column-start: 1;
+                grid-column-end: 3;
+            }
+        }
+
+        @media ($media_sm) {
+            grid-template-columns: 1fr;
+
+            &-empty {
+                min-height: calc(100vh - 10.5rem);
+                grid-column-start: 1;
+                grid-column-end: 1;
+            }
+        }
+
+
     }
 }

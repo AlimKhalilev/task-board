@@ -6,6 +6,14 @@
         align-self: flex-start;
         max-width: 350px;
 
+        @media ($media_lg) {
+            max-width: 400px;
+        }
+
+        @media ($media_xs) {
+            max-width: 100%;
+        }
+
         &:hover {
             background-color: darken($color_bg_card, 2);
             transform: translate(-0.25rem, -0.25rem);

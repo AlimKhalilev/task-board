@@ -17,27 +17,50 @@
                 <div class="account-links-icon">
                     <svg @click="exitLogin"><use xlink:href="../assets/main.svg#icon_logout"></use></svg>
                 </div>
+                <div class="account-links-menu" v-if="windowWidth <= 576">
+                    <div class="navbar_mobile_open">
+                        <input type="checkbox" v-model="menu">
+                        <span aria-label="line1"></span>
+                        <span aria-label="line2"></span>
+                        <span aria-label="line3"></span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="items">
-            <PaneItem v-for="onceData in mainData" :key="onceData.id" v-bind:onceData="onceData"/>
-        </div>
-        <div class="author">
-            <h4>{{ author }}</h4>
-        </div>
+
+        <SlideUpDown :active="menu" :duration="delay" :tag="'aside'">
+            <div class="items-cover">
+                <div class="items">
+                    <PaneItem v-for="onceData in mainData" :key="onceData.id" v-bind:onceData="onceData"/>
+                </div>
+            </div>
+            <div class="author">
+                <h4>{{ author }}</h4>
+            </div>
+        </SlideUpDown>
+
     </div>
 </template>
 
 <script>
 import cookie from '@/components/Cookie.vue'
 import PaneItem from '@/components/PaneItem.vue'
+import SlideUpDown from 'vue-slide-up-down'
+
 export default {
     props: ["mainData"],
     data() {
         return {
+            delay: 0,
+            windowWidth: screen.width,
+            menu: (screen.width <= 576 ? false : true),
+            isMobile: !this.menu,
             login: cookie.getCookie("login"),
             author: "TaskBoard v1.0 by F.Champ"
         }
+    },
+    mounted() {
+        this.delay = 700; // чтобы изначально не было прогрузки
     },
     methods: {
         exitLogin() {
@@ -47,10 +70,16 @@ export default {
         },
         addCard(method) {
             this.$emit("addCard", method);
+            if (this.isMobile) {
+                setTimeout(() => 
+                    document.getElementsByTagName("html")[0].scrollIntoView({behavior: "smooth", block: "end"}), 
+                50); // плавная прокрутка вниз
+            }
         }
     },
     components: {
-        PaneItem
+        PaneItem,
+        SlideUpDown
     }
 }
 </script>
