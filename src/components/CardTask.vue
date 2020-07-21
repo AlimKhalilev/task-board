@@ -20,10 +20,6 @@
         </div>
 
         <div class="card-footer">
-            <!-- <div class="card-footer-checkbox" v-if="onceData.edit">
-                <button @click="updateCard">Сохранить</button>
-                <span data-label="checkbox"></span>
-            </div> -->
             <div class="card-footer-date">
                 <svg><use xlink:href="../assets/main.svg#icon_calendar"></use></svg>
                 <div class="card-footer-date-clock">
@@ -48,10 +44,11 @@ export default {
     data() {
         return {
             title: this.onceData.info.title,
+            text: ""
         }
     },
     methods: {
-    /*  isItemsHasText() {
+        isTaskItemsEntered() { // Проверка на заполненность полей в TaskItem
             let isHasText = 1;
             let taskCount = this.$refs.taskItems.length;
             for (let i = 0; taskCount > i; i++) {
@@ -61,18 +58,18 @@ export default {
                         isHasText = 0;
                         break;
                     }
-                    if (taskCount == (i+1) && isHasText == 1) { // если дошли до послед.элемента и все они заполнены
-                        this.onceData.edit = false; // завершить редактирование карточки
-                        for (let j = 0; taskCount > j; j++) {
-                            if (this.$refs.taskItems[j].taskInfo.edit) { // если при клике на карту какой-то из task в состоянии edit
-                                this.$refs.taskItems[j].addItem(); // вызов функции добавления элемента
-                            }
-                        }
-                    }
                 }
             }
             return isHasText;
-        },  */
+        },
+        getTaskItemsInfo() { // получение массива текста items из TaskItem
+            let arrText = [];
+            let taskCount = this.$refs.taskItems.length;
+            for (let j = 0; taskCount > j; j++) {
+                arrText.push(this.$refs.taskItems[j].text);
+            }
+            return arrText;
+        },
         updateCardItem(type, mode, id, title, text, taskid, complete) {
             if (this.onceData.edit) { // если карточка еще редактируется, или не сохранена
                 alert("Завершите редактирование карточки")
@@ -82,15 +79,14 @@ export default {
             }
         },
         updateCard() {
-            //console.log(this.$refs.taskItems[0].text);
             if (!this.title) {
                 alert("Заполните поле названия задачи")
             }
             else {
-                this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
-                //if (this.isItemsHasText()) { // проверка на содержание текста в CardTestItem (заготовка под сохранение всех задач)
-                //    this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
-                //}
+                if (this.isTaskItemsEntered()) {
+                    this.text = this.getTaskItemsInfo();
+                    this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
+                }
             }
         },
         editMode() {

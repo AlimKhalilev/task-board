@@ -31,7 +31,7 @@
         <SlideUpDown :active="menu" :duration="delay" :tag="'aside'">
             <div class="items-cover">
                 <div class="items">
-                    <PaneItem v-for="onceData in mainData" :key="onceData.id" v-bind:onceData="onceData"/>
+                    <PaneItem v-for="onceData in filterData(mainData)" :key="onceData.id" v-bind:onceData="onceData"/>
                 </div>
             </div>
             <div class="author">
@@ -62,6 +62,9 @@ export default {
         this.delay = 700; // чтобы изначально не было прогрузки
     },
     methods: {
+        filterData(data) {
+            return data.slice().reverse(); // обратный массив
+        },
         exitLogin() {
             cookie.deleteCookie("login");
             cookie.deleteCookie("_ym_gflne");
@@ -69,9 +72,9 @@ export default {
         },
         addCard(method) {
             this.$emit("addCard", method);
-            setTimeout(() => 
-                document.getElementsByTagName("html")[0].scrollIntoView({behavior: "smooth", block: "end"}), 
-            50); // плавная прокрутка вниз
+            // setTimeout(() => 
+            //     document.getElementsByTagName("html")[0].scrollIntoView({behavior: "smooth", block: "end"}), 
+            // 50); // плавная прокрутка вниз
         }
     },
     components: {

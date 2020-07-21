@@ -7,7 +7,7 @@
 import CardNote from '@/components/CardNote.vue'
 import CardTask from '@/components/CardTask.vue'
 export default {
-    props: ["onceData"],
+    props: ["onceData", "cardPos", "cardCount"],
     data() {
         return {
 

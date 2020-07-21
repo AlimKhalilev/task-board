@@ -7,7 +7,7 @@
                     <h2>Добро пожаловать в TaskBoard!</h2>
                     <h3>Добавьте свою первую запись, нажав на <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg> слева</h3>
                 </div>
-                <Card @updateCard="updateCard" v-for="onceData in mainData" :key="onceData.id" v-bind:onceData="onceData"/>
+                <Card @updateCard="updateCard" v-for="onceData in filterData(mainData)" :key="onceData.id" v-bind:onceData="onceData"/>
             </div>
         </div>
     </section>
@@ -17,7 +17,6 @@
 import Pane from '@/components/Pane.vue'
 import Card from '@/components/Card.vue'
 import cookie from '@/components/Cookie.vue'
-import moment from 'moment'
 import axios from 'axios'
 export default {
     data() {
@@ -53,6 +52,9 @@ export default {
 
     },
     methods: {
+        filterData(data) {
+            return data.slice().reverse(); // обратный массив
+        },
         openAuth() {
             this.$emit("openAuth", 0); // кидаем на авторизацию
         },
@@ -63,8 +65,8 @@ export default {
                         {
                             title: "",
                             text: "",
-                            date: moment().format('DD.MM.YY'),
-                            time: moment().format('HH:mm')
+                            date: this.getNowDate(),
+                            time: this.getNowTime()
                         }
                     },
                 )
@@ -74,8 +76,8 @@ export default {
                     {id:this.getNewCardId(), type: "task", edit: true, info:
                         {
                             title: "",
-                            dateAdd: moment().format('DD.MM.YY'),
-                            timeAdd: moment().format('HH:mm'),
+                            dateAdd: this.getNowDate(),
+                            timeAdd: this.getNowTime(),
                             dateComplete: "",
                             timeComplete: "",
                             tasksInfo: [
@@ -83,8 +85,8 @@ export default {
                                     id: this.getMaxTaskId() + 1,
                                     text: "",
                                     complete: false,
-                                    dateAdd: moment().format('DD.MM.YY'),
-                                    timeAdd: moment().format('HH:mm'),
+                                    dateAdd: this.getNowDate(),
+                                    timeAdd: this.getNowTime(),
                                     dateComplete: "",
                                     timeComplete: "",
                                     edit: true
@@ -173,7 +175,8 @@ export default {
                                 mode: mode,
                                 login: cookie.getCookie("login"),
                                 cardID: this.mainData[index].id,
-                                title: title
+                                title: title,
+                                text: text
                             })
                             .then(response => {
                                 if (response.data) { // если обновление карточки
@@ -192,6 +195,12 @@ export default {
                                             this.mainData[index].id = response.data.id; // присвоить ключ, полученный с синхры api database
                                             this.mainData[index].info.dateAdd = response.data.date;
                                             this.mainData[index].info.timeAdd = response.data.time;
+
+                                            for (let i = 0; i < response.data.taskItemArr.length; i++) { // блок для внесения изменений в task Item
+                                                this.mainData[index].info.tasksInfo[i].id = response.data.taskItemArr[i];
+                                                this.mainData[index].info.tasksInfo[i].edit = false;
+                                                this.mainData[index].info.tasksInfo[i].text = response.data.text[i];
+                                            }
                                         }
                                     }
                                 }
@@ -210,8 +219,8 @@ export default {
                                 id: Date.now(), // дабы исключить совпадающие ключи
                                 text: "",
                                 complete: false,
-                                dateAdd: moment().format('DD.MM.YY'),
-                                timeAdd: moment().format('HH:mm'),
+                                dateAdd: this.getNowDate(),
+                                timeAdd: this.getNowTime(),
                                 dateComplete: "",
                                 timeComplete: "",
                                 edit: true
@@ -355,6 +364,19 @@ export default {
             else {
                 return false;
             }
+        },
+        getNowDate() {
+            let today = new Date();
+            let dd = String(today.getDate()).padStart(2, '0');
+            let mm = String(today.getMonth()).padStart(2, '0');
+            let yy = String(today.getFullYear()).substring(2, 4);
+            return `${dd}.${mm}.${yy}`;
+        },
+        getNowTime() {
+            let today = new Date();
+            let hh = String(today.getHours()).padStart(2, '0');
+            let mm = String(today.getMinutes()).padStart(2, '0');
+            return `${hh}:${mm}`;
         }
     },
     components: {

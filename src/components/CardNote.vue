@@ -21,9 +21,6 @@
         </div>
 
         <div class="card-footer">
-            <!-- <div class="card-footer-checkbox" v-if="onceData.edit">
-                <button @click="updateCard">Сохранить</button>
-            </div> -->
             <div class="card-footer-date">
                 <svg><use xlink:href="../assets/main.svg#icon_calendar"></use></svg>
                 <div class="card-footer-date-clock clock-once">
