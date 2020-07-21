@@ -21,7 +21,7 @@ export default {
         }
         else {
             axios
-                .post("https://files.thechampguess.ru/taskboard.php", {
+                .post(cookie.linkAPI, {
                     type: "checkAuth",
                     login: cookie.getCookie("login"),
                     _ym_gflne: cookie.getCookie("_ym_gflne")

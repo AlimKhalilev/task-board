@@ -31,7 +31,7 @@ export default {
         document.title = "Главная - TaskBoard"
 
         axios // запрос на получшение всех карточек из бд
-            .post("https://files.thechampguess.ru/taskboard.php", {
+            .post(cookie.linkAPI, {
                 type: "getAllCards",
                 login: cookie.getCookie("login")
             })
@@ -111,7 +111,7 @@ export default {
                         // }
 
                         axios // запрос на обновление данных карточки в бд
-                            .post("https://files.thechampguess.ru/taskboard.php", {
+                            .post(cookie.linkAPI, {
                                 type: "updateCardNote",
                                 mode: (this.mainData[index].id > this.maxCardID ? "add" : "edit"),
                                 login: cookie.getCookie("login"),
@@ -147,7 +147,7 @@ export default {
                     if (mode == "delete") {
 
                         axios // запрос на удаление карточки из бд
-                            .post("https://files.thechampguess.ru/taskboard.php", {
+                            .post(cookie.linkAPI, {
                                 type: "deleteCardNote",
                                 cardID: this.mainData[index].id
                             })
@@ -170,7 +170,7 @@ export default {
                     }
                     if (mode == "addTask" || mode == "editTask" || mode == "delete") {
                         axios // запрос на обновление данных Task Item
-                            .post("https://files.thechampguess.ru/taskboard.php", {
+                            .post(cookie.linkAPI, {
                                 type: "updateTask",
                                 mode: mode,
                                 login: cookie.getCookie("login"),
@@ -246,7 +246,7 @@ export default {
                                 console.log(mode, taskIndex)
                                 
                                 axios // запрос на обновление данных Task Item
-                                    .post("https://files.thechampguess.ru/taskboard.php", {
+                                    .post(cookie.linkAPI, {
                                         type: "updateTaskItem",
                                         mode: mode,
                                         login: cookie.getCookie("login"),

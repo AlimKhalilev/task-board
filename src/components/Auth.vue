@@ -40,7 +40,7 @@ export default {
                 return 0;
             }
             axios // запрос на авторизацию
-                .post("https://files.thechampguess.ru/taskboard.php", {
+                .post(cookie.linkAPI, {
                     type: "sendAuth",
                     login: this.login,
                     password: this.password

@@ -25,6 +25,7 @@
 
 <script>
 import axios from 'axios';
+import cookie from '@/components/Cookie.vue'
 export default {
     mounted() {
         document.title = "Регистрация - TaskBoard"
@@ -48,7 +49,7 @@ export default {
             }
             else {
                 axios // проверка на несуществование учетки в бд (1 нет, 0 есть)
-                    .post("https://files.thechampguess.ru/taskboard.php", {
+                    .post(cookie.linkAPI, {
                         type: "checkReg",
                         login: this.login
                     })
@@ -68,7 +69,7 @@ export default {
         },
         sendRegData() { // запрос в бд на регистрацию
             axios
-                .post("https://files.thechampguess.ru/taskboard.php", {
+                .post(cookie.linkAPI, {
                     type: "registration",
                     login: this.login,
                     password: this.password,

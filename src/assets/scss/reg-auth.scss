@@ -10,6 +10,11 @@
         min-width: 350px;
         text-align: center;
 
+        @media ($media_xs) {
+            min-width: auto;
+            width: 90%;
+        }
+
         &-header {
             padding: 1.5rem 2rem 1rem 2rem;
             background-color: $color_checked;
