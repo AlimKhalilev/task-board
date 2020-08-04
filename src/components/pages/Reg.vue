@@ -54,7 +54,7 @@ export default {
                         login: this.login
                     })
                     .then(response => {
-                        if (response.data == "none") { // если учетки нет
+                        if (response.data.status) { // если учетки нет
                             this.sendRegData();
                         }
                         else { // если учетка есть

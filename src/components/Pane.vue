@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import cookie from '@/components/Cookie.vue'
 import PaneItem from '@/components/PaneItem.vue'
 import SlideUpDown from 'vue-slide-up-down'
@@ -54,19 +55,20 @@ export default {
             delay: 0,
             windowWidth: screen.width,
             menu: (screen.width <= 576 ? false : true),
-            login: cookie.getCookie("login"),
-            author: "TaskBoard v1.0 by F.Champ"
+            author: "TaskBoard v1.0 by F.Champ",
+            login: ''
         }
     },
     mounted() {
         this.delay = 700; // чтобы изначально не было прогрузки
+        this.getMyLogin() // запрашиваем логин
     },
     methods: {
         filterData(data) {
             return data.slice().reverse(); // обратный массив
         },
         exitLogin() {
-            cookie.deleteCookie("login");
+            cookie.deleteCookie("_ym_rwots");
             cookie.deleteCookie("_ym_gflne");
             this.$emit("openAuth", 0); // кидаем на авторизацию
         },
@@ -75,6 +77,23 @@ export default {
             // setTimeout(() => 
             //     document.getElementsByTagName("html")[0].scrollIntoView({behavior: "smooth", block: "end"}), 
             // 50); // плавная прокрутка вниз
+        },
+        getMyLogin() {
+            axios // запрос на авторизацию
+                .post(cookie.linkAPI, {
+                    type: "getMyLogin",
+                    _ym_rwots: cookie.getCookie("_ym_rwots")
+                })
+                .then(response => {
+                    if (response.data.status) { // успешно
+                        this.login = response.data.login;
+                    }
+                    else { // не успешно
+                        console.log("Data error");
+                    }
+                }
+                )
+                .catch(error => console.log(error));
         }
     },
     components: {

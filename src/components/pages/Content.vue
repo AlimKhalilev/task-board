@@ -11,23 +11,23 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            login: cookie.getCookie("login"),
             isAuth: null, // по дефолту еще не известно что загружать
         }
     },
     mounted() {
-        if (cookie.getCookie("login") == "" || cookie.getCookie("_ym_gflne") == "") {
+        if (!cookie.getCookie("_ym_rwots") || !cookie.getCookie("_ym_gflne")) {
             this.isAuth = 0; // кидаем на авторизацию
         }
         else {
             axios
                 .post(cookie.linkAPI, {
                     type: "checkAuth",
-                    login: cookie.getCookie("login"),
-                    _ym_gflne: cookie.getCookie("_ym_gflne")
+                    _ym_rwots: cookie.getCookie("_ym_rwots"),
+                    _ym_gflne: cookie.getCookie("_ym_gflne"),
+
                 })
                 .then(response => {
-                    if (response.data == "success") { // если учетка из куки подтверждена
+                    if (response.data.status) { // если учетка из куки подтверждена
                         this.isAuth = 1; // уже авторизированы
                     }
                     else {

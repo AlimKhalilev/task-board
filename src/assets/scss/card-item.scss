@@ -71,6 +71,7 @@
                 margin: 0.2rem 0;
                 transition: 0.3s ease-in-out;
                 opacity: 0;
+                visibility: hidden;
 
                 svg {
                     width: 0.75rem;
@@ -163,6 +164,7 @@
             &:hover {
                 .card-container-items-item-edit {
                     opacity: 1;
+                    visibility: visible;
                 }
             }
         }

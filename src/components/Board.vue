@@ -33,7 +33,7 @@ export default {
         axios // запрос на получшение всех карточек из бд
             .post(cookie.linkAPI, {
                 type: "getAllCards",
-                login: cookie.getCookie("login")
+                _ym_rwots: cookie.getCookie("_ym_rwots")
             })
             .then(response => {
                 if (response.data) {
@@ -114,7 +114,7 @@ export default {
                             .post(cookie.linkAPI, {
                                 type: "updateCardNote",
                                 mode: (this.mainData[index].id > this.maxCardID ? "add" : "edit"),
-                                login: cookie.getCookie("login"),
+                                _ym_rwots: cookie.getCookie("_ym_rwots"),
                                 cardID: this.mainData[index].id,
                                 title: title,
                                 text: text
@@ -173,7 +173,7 @@ export default {
                             .post(cookie.linkAPI, {
                                 type: "updateTask",
                                 mode: mode,
-                                login: cookie.getCookie("login"),
+                                _ym_rwots: cookie.getCookie("_ym_rwots"),
                                 cardID: this.mainData[index].id,
                                 title: title,
                                 text: text
@@ -181,6 +181,7 @@ export default {
                             .then(response => {
                                 if (response.data) { // если обновление карточки
                                     console.log(mode);
+                                    console.log(response.data);
 
                                     if (response.data.delete) { // удаление task
                                         this.mainData.splice(index, 1); // с index элемента удалить 1
@@ -249,7 +250,6 @@ export default {
                                     .post(cookie.linkAPI, {
                                         type: "updateTaskItem",
                                         mode: mode,
-                                        login: cookie.getCookie("login"),
                                         cardID: this.mainData[index].id,
                                         taskID: mainTaskData.id,
                                         complete: complete,
@@ -384,85 +384,5 @@ export default {
         Card
     }
 }
-
-
-/*
------ Запрос на получение всей инфы (из таблицы NOTE) --------
-
-SELECT CardID AS ID, title, text, date, time FROM `note` WHERE cardID IN(
-	SELECT ID FROM `cards` WHERE owner = (
-		SELECT ID FROM `users` WHERE `login` = '$login'   
-	)
-)
-
--------- Запрос на получение инфы из всех карточек (NOTE, TASK)
-
-SELECT cardID AS ID, type, title, text, date AS dateAdd, time AS timeAdd, date AS dateEnd, time AS timeEnd FROM `note`, `cards` WHERE cardID IN(
-	SELECT ID FROM `cards` WHERE owner = (
-		SELECT ID FROM `users` WHERE `login` = '$login'   
-	)
-) AND (cards.ID = note.cardID) UNION ALL 
-
-SELECT cardID AS ID, type, title, title AS text, dateAdd, timeAdd, dateEnd, timeEnd FROM `task`, `cards` WHERE cardID IN(
-	SELECT ID FROM `cards` WHERE owner = (
-		SELECT ID FROM `users` WHERE `login` = '$login'   
-	)
-) AND (cards.ID = task.cardID) ORDER BY ID
-
-
--------- Запрос для добавления карточки NOTE
-
-START TRANSACTION;
-SELECT @cardID:=MAX(cards.ID)+1, @noteID:=MAX(note.ID)+1 FROM `cards`, `note`;
-INSERT INTO `cards` (`ID`, `owner`, `type`) VALUES (@cardID, (SELECT ID FROM `users` WHERE `login`='$login'), 1);
-INSERT INTO `note`(`ID`, `cardID`, `title`, `text`, `date`, `time`) VALUES (@noteID, @cardID, 'title', 'text', '2020-07-14', '21:01:00');
-COMMIT;
-
-*/
-
-
-            /* mainData: [
-                {id:12414112, type: "note", edit: false, info:
-                    {
-                        title: "Без тайтла",
-                        text: "Привет, сегодня хорошая погода, вот бы доделать TaskBoard..",
-                        date: "24.03.20",
-                        time: "13:47"
-                    }
-                },
-                {id:7684349, type: "task", edit: false, info:
-                    {
-                        title: "Первые задачи",
-                        dateAdd: "24.03.20",
-                        timeAdd: "13:52",
-                        dateComplete: "24.03.20",
-                        timeComplete: "13:52",
-                        tasksInfo: [
-                            {
-                                id: 55684349,
-                                text: "Пообедать",
-                                complete: true,
-                                dateAdd: "24.03.20",
-                                timeAdd: "13:52",
-                                dateComplete: "24.03.20",
-                                timeComplete: "13:52",
-                                edit: false
-                            },
-                            {
-                                id: 55684312,
-                                text: "Отдохнуть",
-                                complete: false,
-                                dateAdd: "24.03.20",
-                                timeAdd: "13:52",
-                                dateComplete: "24.03.20",
-                                timeComplete: "13:52",
-                                edit: false
-                            }
-                        ]
-                    }
-                }
-            ]
-            */
-
 
 </script>
