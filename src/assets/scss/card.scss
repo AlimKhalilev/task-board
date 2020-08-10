@@ -4,36 +4,32 @@
         transition: 0.3s ease-in-out;
         @include boxShadow;
         align-self: flex-start;
-        max-width: 350px;
 
-        @media ($media_lg) {
-            max-width: 400px;
+        @media ($media_md) {
+            min-width: 100%;
+
+            &:focus-within {
+                @include cardShowItems;
+            }
         }
 
-        @media ($media_xs) {
-            max-width: 100%;
-        }
-
-        &:hover {
-            background-color: darken($color_bg_card, 2);
-            transform: translate(-0.25rem, -0.25rem);
-            @include boxShadowHover;
-
-            .card-footer-add svg, .card-footer-edit svg {
-                opacity: 1;
-                visibility: visible;
+        @media ($media_lg_full) {
+            &:hover, &:focus-within {
+                @include cardShowItems;
             }
         }
 
         &-header {
-            padding: 1.5rem 2rem 1rem 2rem;
+            padding: 1.5rem 2rem 1.15rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: $color_checked;
 
             h3 {
+                word-break: break-word;
                 font-size: 1.3rem;
+                line-height: 1.4;
             }
 
             input {
@@ -54,20 +50,28 @@
         &-container {
             padding: 0.7rem 2rem;
 
+            max-height: 20rem;
+            overflow-y: auto;
+
+            @media ($media_sm) {
+                max-height: none;
+            }
+
             &-items {
 
                 &-content {
                     padding: 0.8rem 0;
 
                     span, textarea {
-                        overflow-wrap: break-word;
+                        word-break: break-word;
                         font-size: 0.9rem;
-                        line-height: 1.6;
+                        line-height: 1.7;
                     }
 
                     textarea {
                         padding: 0.3rem 0.5rem;
                         width: 100%;
+                        height: 8rem;
                         resize: none;
                     }
                 }
@@ -154,43 +158,113 @@
             }
 
             &-add, &-edit {
-                span {
+                transition: 0.3s ease-in-out;
+                opacity: 0;
+                visibility: hidden;
+
+                button {
+                    
+                    background: none;
+                    border: none;
+                    padding: 0;
+
+                    svg {
+                        width: 1rem;
+                        height: 1rem;
+                    }
+
+                    &:focus {
+                        outline: none;
+                        
+                        svg {
+                            transform: scale(1.2);
+                        }
+                    }
+                }
+
+                button[aria-label="checkbox"] {
                     border: 0.11rem solid $color_success;
                     border-top: none;
                     border-right: none;
                     height: 0.7rem;
                     width: 1.2rem;
+                    transition: 0.3s ease-in-out;
                     -webkit-transform: rotate(-45deg);
                     transform: rotate(-45deg);
                     margin: -0.5rem 0.1rem 0 0;
                     cursor: pointer;
+
+                    &:focus {
+                        transform: rotate(-45deg) scale(1.2);
+                    }
+                }
+
+                &-dropdown {
+                    position: absolute;
+                    background-color: $color_bg_main;
+                    color: $color_main;
+                    border: 1px solid $color_bg_card;
+                    transition: 0.3s ease-in-out;
+                    right: 2rem;
+                    bottom: -3.5rem;
+
+                    h5 {
+                        white-space: nowrap;
+                        padding: 0.8rem 0.5rem;
+                        border-bottom: 1px solid $color_bg_card;
+                        font-size: 0.8rem;
+                    }
+
+                    &-content {
+                        display: flex;
+
+                        button {
+                            transition: 0.3s ease-in-out;
+                            flex-basis: 50%;
+                            color: $color_main;
+                            padding: 0.5rem;
+                            font-size: 0.8rem;
+                            cursor: pointer;
+
+                            &:first-child {
+                                border-right: 1px solid $color_bg_card;
+
+                                &:hover, &:focus {
+                                    color: $color_success;
+                                }
+                            }
+
+                            &:hover, &:focus {
+                                color: $color_warning;
+                            }
+                        }
+                    }
                 }
             }
 
             &-add {
                 display: flex;
 
-                svg {
-                    width: 1rem;
-                    height: 1rem;
-                    opacity: 0;
-                    visibility: hidden;
-
-                    &:nth-child(1) {
-                        &:hover {
+                &-new {
+                    &:hover, &:focus {
+                        svg {
                             fill: $color_success;
                         }
                     }
-                    &:nth-child(2) {
+                }
+                &-change {
+                    svg {
                         fill: $color_warning;
                         margin: 0 0.4rem;
                     }
-                    &:nth-child(3) {
+                }
+                &-delete {
+                    svg {
                         fill: $color_error;
                     }
                 }
 
-                span {
+                button[aria-label="checkbox"] {
                     margin: -0.5rem 0.1rem 0.3rem 0.7rem;
                     transform-origin: 80% 100%;
                 }
@@ -201,13 +275,11 @@
                 display: flex;
 
                 svg {
-                    width: 1rem;
-                    height: 1rem;
-                    opacity: 0;
-                    visibility: hidden;
                     fill: $color_warning;
+                }
 
-                    &:last-child {
+                &-delete {
+                    svg {
                         fill: $color_error;
                         margin-left: 0.4rem;
                     }

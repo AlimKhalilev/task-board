@@ -13,7 +13,7 @@ $screen_xl_container: 100%; // notebooks full hd
 $screen_base_container: 100%;
 
 // $media_xl: "min-width: " + ($screen_lg + 1) + ") and (max-width: " + $screen_xl;
-// $media_lg: "min-width: " + ($screen_md + 1) + ") and (max-width: " + $screen_lg;
+$media_lg_full: "min-width: " + ($screen_md + 1) + ")";
 // $media_md: "min-width: " + ($screen_sm + 1) + ") and (max-width: " + $screen_md;
 // $media_sm: "min-width: " + ($screen_xs + 1) + ") and (max-width: " + $screen_sm;
 //  ТОЧЕЧНЫЙ АДАПТИВ (ПРОМЕЖУТОЧНЫЙ)  \\

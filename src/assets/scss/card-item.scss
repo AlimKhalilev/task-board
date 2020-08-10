@@ -1,6 +1,8 @@
 .section-main-cards {
     .card-container-items {
         &-item {
+            position: relative;
+            outline: none;
 
             &-text {
                 display: flex;
@@ -10,10 +12,12 @@
                 padding-top: 0.9rem;
 
                 input[type="checkbox"] {
-                    -webkit-appearance: none;
                     width: 0;
                     height: 0;
-                    visibility: hidden;
+                }
+
+                input[type="checkbox"]:focus ~ span {
+                    text-decoration: underline;
                 }
 
                 input[type="checkbox"]:checked ~ span::before {
@@ -38,7 +42,7 @@
                 textarea {
                     font-size: 0.9rem;
                     padding: 0.3rem 0.5rem;
-                    line-height: 1.6;
+                    line-height: 1.7;
                     width: 100%;
                     resize: none;
                 }
@@ -65,6 +69,7 @@
             }
 
             &-edit {
+                position: relative;
                 display: flex;
                 flex-basis: 100%;
                 justify-content: flex-end;
@@ -73,7 +78,22 @@
                 opacity: 0;
                 visibility: hidden;
 
-                svg {
+                button {
+                    padding: 0;
+                    border: none;
+                    background: none;
+                    display: flex;
+
+                    &:focus {
+                        outline: none;
+
+                        svg {
+                            transform: scale(1.2);
+                        }
+                    }
+                }
+
+                svg, button svg {
                     width: 0.75rem;
                     height: 0.75rem;
                     fill: $color_warning;
@@ -104,8 +124,8 @@
                             padding: 0.3rem 0.5rem;
                             font-size: 0.6rem;
                             position: absolute;
-                            left: 0;
-                            bottom: -2.2rem;
+                            left: -3px;
+                            top: -2rem;
                             display: none;
                         }
 
@@ -134,15 +154,13 @@
                 }
 
                 &-links {
-
-                    svg {
-
-                        &:last-child {
+                    button:nth-child(2) {
+                        svg {
                             fill: $color_error;
                         }
                     }
 
-                    span {
+                    button[aria-label="checkbox"] {
                         border: 0.11rem solid $color_success;
                         border-top: none;
                         border-right: none;
@@ -152,6 +170,11 @@
                         transform: rotate(-45deg) scale(0.7);
                         margin: -0.5rem 0.1rem 0.3rem 0.1rem;
                         cursor: pointer;
+                        transition: 0.3s ease-in-out;
+
+                        &:focus {
+                            transform: rotate(-45deg) scale(0.85);
+                        }
                     }
                 }
             }
@@ -161,10 +184,64 @@
                 border-bottom: 1px solid $color_checked;
             }
 
-            &:hover {
+            &:hover, &:focus-within {
                 .card-container-items-item-edit {
                     opacity: 1;
                     visibility: visible;
+                }
+            }
+        }
+    }
+
+    .card-container-items-item-dropdown, .card-container-items-item-edit-links-dropdown {
+        position: absolute;
+        background-color: $color_bg_main;
+        color: $color_main;
+        border: 1px solid $color_bg_card;
+        transition: 0.3s ease-in-out;
+        right: 1rem;
+        bottom: -2px;
+        z-index: 1;
+    
+        h5 {
+            white-space: nowrap;
+            padding: 0.8rem 0.5rem;
+            border-bottom: 1px solid $color_bg_card;
+            font-size: 0.8rem;
+        }
+    
+        &-content {
+            display: flex;
+    
+            button {
+                padding: 0;
+                border: none;
+                background: none;
+
+                transition: 0.3s ease-in-out;
+                flex-basis: 50%;
+                color: $color_main;
+                padding: 0.5rem;
+                font-size: 0.8rem;
+                cursor: pointer;
+    
+                display: flex;
+                justify-content: center;
+
+                &:focus {
+                    outline: none;
+                }
+    
+                &:first-child {
+                    border-right: 1px solid $color_bg_card;
+    
+                    &:hover, &:focus {
+                        color: $color_success;
+                    }
+                }
+    
+                &:hover, &:focus {
+                    color: $color_warning;
                 }
             }
         }

@@ -51,6 +51,13 @@
             &-links {
                 display: flex;
 
+                button {
+                    border: none;
+                    background: none;
+                    padding: 0;
+                    color: $color_main;
+                }
+
                 &-menu {
                     margin-left: 0.8rem;
 
@@ -73,6 +80,10 @@
                             opacity: 0;
                             z-index: 1;
                         }
+
+                        // input:focus ~ span, input:checked:focus ~ span {
+                        //     background-color: $color_success;
+                        // }
                     
                         input:checked ~ span {
                             background-color: lighten($color_card_title_input, 30%);
@@ -123,8 +134,16 @@
                     position: relative;
                     display: flex;
                     align-items: center;
-    
-                    svg {    
+
+                    outline: none;
+
+                    &:focus {
+                        svg {
+                            fill: $color_success; 
+                        }
+                    }
+
+                    svg {
                         &:hover {
                             fill: $color_success;
                         }
@@ -133,7 +152,15 @@
                     &.add_card {
                         margin-right: 1rem;
 
-                        &:hover {
+                        &:focus {
+                            outline: none;
+
+                            svg {
+                                fill: $color_success;
+                            }
+                        }
+
+                        &:hover, &:focus-within {
                             .account-links-icon-dropdown {
                                 visibility: visible;
                                 opacity: 1;
@@ -153,14 +180,16 @@
                         opacity: 0;
                         transition: 0.3s ease-in-out;
 
-                        span {
+                        button {
+                            background-color: $color_bg_main;
                             font-size: 0.8rem;
                             white-space: nowrap;
                             padding: 1rem 0.8rem;
                             transition: 0.3s ease-in-out;
                             cursor: pointer;
+                            outline: none;
 
-                            &:hover {
+                            &:hover, &:focus {
                                 color: $color_success;
                             }
 

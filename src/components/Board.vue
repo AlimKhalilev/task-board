@@ -21,10 +21,37 @@ import axios from 'axios'
 export default {
     data() {
         return {
+            firstLoad: false,
             isLoadData: false,
             maxCardID: 0,
             maxTaskID: 0,
             mainData: []
+        }
+    },
+    updated() { // БЛОК ДЛЯ АНИМАЦИИ
+        if (!this.firstLoad) { // вызываем только 1 раз после первой загрузки
+            let timeEqual = 0.2;
+
+            if (!document.querySelectorAll(".card").length) { // если карточек нет
+                let elem = document.querySelector(".section-main-cards-empty");
+                elem.style = 'opacity: 0; animation: fadeIn 0.7s ease-in-out 0s forwards';
+                elem.addEventListener('animationend', () => {
+                    elem.removeAttribute("style");
+                });
+            }
+            else {
+                document.querySelectorAll(".card").forEach(function(elem, i) {
+                    let pane_item = document.querySelectorAll(".items-item")[i];
+                    let style_str = 'opacity: 0; animation: fadeIn 0.7s ease-in-out '+(timeEqual + (i * timeEqual))+'s forwards';
+                    elem.style = style_str;
+                    pane_item.style = style_str;
+                    elem.addEventListener('animationend', () => {
+                        elem.removeAttribute("style");
+                        pane_item.removeAttribute("style");
+                    });
+                });
+            }
+            this.firstLoad = true;
         }
     },
     mounted() {
@@ -41,6 +68,9 @@ export default {
                     if (this.mainData.length >= 1) { // уже есть карточки в бд
                         this.maxCardID = Number(this.mainData[this.mainData.length-1].id);
                         this.maxTaskID = this.getMaxTaskId();
+                    }
+                    else { // если карточек нет
+                        document.querySelector(".section-main-cards").style = "display: flex";
                     }
                     this.isLoadData = true;
                 }
@@ -102,13 +132,6 @@ export default {
             if (index != -1) {
                 if (type == "note") { // действия с записями
                     if (mode == "update") {
-
-                        // if (this.mainData[index].id > this.maxCardID) {
-                        //     console.log("Добавление")
-                        // }
-                        // else {
-                        //     console.log("Редактирование")
-                        // }
 
                         axios // запрос на обновление данных карточки в бд
                             .post(cookie.linkAPI, {
@@ -384,5 +407,40 @@ export default {
         Card
     }
 }
+
+        // if (screen.width > 768) { // добавляем гор. скролл на мышь если не моб.устройство mounted
+        //     let paneCards = document.getElementsByClassName('section-main-cards')[0];
+        //     if (paneCards.addEventListener) {
+        //         paneCards.addEventListener("mousewheel", this.scrollHorizontally, false); // IE9, Chrome, Safari, Opera
+        //         paneCards.addEventListener("DOMMouseScroll", this.scrollHorizontally, false); // Firefox
+        //     } 
+        //     else {
+        //         paneCards.attachEvent("onmousewheel", this.scrollHorizontally); // IE 6/7/8
+        //     }
+        // }
+
+        //         scrollHorizontally(e) { // method
+        //     let needScroll = true; // скролл нужен
+
+        //     if (e.target.closest(".card") != null) { // ищем карточку
+        //         let containerCard = e.target.closest(".card").querySelector(".card-container"); // берем класс container
+        //         if (e.target.closest(".card-container") && containerCard.scrollHeight != containerCard.offsetHeight) { // если есть скролл и это 100% container
+        //             needScroll = false; // скролл не нужен
+        //         }
+        //     }
+
+        //     if (needScroll) {
+        //         let paneCards = document.getElementsByClassName('section-main-cards')[0];
+        //         let scrollSpeed = 100;
+        //         let scrollCount = paneCards.scrollLeft;
+        //         e = window.event || e;
+        //         let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        //         scrollCount -= (delta*scrollSpeed);
+        //         //paneCards.scrollTo({left: scrollCount, behavior: 'smooth'});
+        //         paneCards.scrollLeft = scrollCount;
+        //         e.preventDefault();
+        //     }
+
+        // },
 
 </script>

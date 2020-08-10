@@ -14,17 +14,27 @@
             align-items: center;
             margin-bottom: 0.9rem;
 
+            border: none;
+            color: $color_main;
+            width: 100%;
+
             &:not(:last-child) {
                 margin-bottom: 1.2rem;
             }
 
-            &:hover {
+            &:focus {
+                outline: none;
+            }
+
+            &:hover, &:focus {
                 transform: translate(-0.25rem, -0.25rem);
                 @include boxShadowItemHover;
             }
 
             &-text {
-
+                word-break: break-word;
+                text-align: left;
+                line-height: 1.4;
             }
 
             &-stat {

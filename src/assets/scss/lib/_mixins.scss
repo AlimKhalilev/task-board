@@ -16,6 +16,18 @@
     box-shadow: 1rem 1rem 0.625rem -0.35rem rgba(15,15,15,1);
 }
 
+@mixin cardShowItems {
+    background-color: darken($color_bg_card, 2);
+    transform: translate(-0.25rem, -0.25rem);
+    outline: none;
+    @include boxShadowHover;
+
+    .card-footer-add, .card-footer-edit{
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
 html, body {
     font-family: 'Comfortaa', cursive;
     font-size: 16px;
@@ -51,7 +63,7 @@ input, textarea {
     }
 }
 
-button, input[type="submit"] {
+form button, form input[type="submit"] {
     transition: 0.3s ease-in-out;
     color: $color_main;
     background-color: $color_checked;
@@ -85,6 +97,16 @@ button, input[type="submit"] {
 ::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
     background: lighten($color_bg_main, 10%); 
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 // === / Mixins ===

@@ -1,9 +1,9 @@
 <template>
-    <div class="card">
+    <div class="card" tabindex="0">
 
         <div class="card-header">
 
-            <input placeholder="Название записи" type="text" v-if="onceData.edit" v-model="title">
+            <input v-on:keyup.enter="updateCard" placeholder="Название записи" type="text" v-if="onceData.edit" v-model="title" ref="titleDOM">
             <h3 v-else>{{ title }}</h3>
 
             <div class="card-header-links" v-if="!onceData.edit">
@@ -14,7 +14,7 @@
         <div class="card-container">
             <div class="card-container-items">
                 <div class="card-container-items-content">
-                    <textarea placeholder="Текст записи" type="text" v-if="onceData.edit" v-model="text"></textarea>
+                    <textarea v-on:keyup.ctrl.enter="updateCard" placeholder="Текст записи" type="text" v-if="onceData.edit" v-model="text"></textarea>
                     <span v-else>{{ text }}</span>
                 </div>
             </div>
@@ -28,9 +28,16 @@
                 </div>
             </div>
             <div class="card-footer-edit">
-                <svg v-if="!onceData.edit" @click="editMode"><use xlink:href="../assets/main.svg#icon_pencil"></use></svg>
-                <svg v-if="!onceData.edit" @click="deleteMode"><use xlink:href="../assets/main.svg#icon_close"></use></svg>
-                <span v-if="onceData.edit" @click="updateCard" data-label="checkbox"></span>
+                <button v-if="!onceData.edit" @click="editMode" class="card-footer-edit-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
+                <button v-if="!onceData.edit" @click="deleteMode" class="card-footer-edit-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
+                <button v-if="onceData.edit" @click="updateCard" aria-label="checkbox"></button>
+                <div class="card-footer-edit-dropdown" v-if="isDelete">
+                    <h5>Удалить запись?</h5>
+                    <div class="card-footer-edit-dropdown-content">
+                        <button @click="deleteCard('yes')">Да</button>
+                        <button @click="deleteCard('no')">Нет</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -44,6 +51,18 @@ export default {
         return {
             text: this.onceData.info.text,
             title: this.onceData.info.title,
+            isEdit: false,
+            isDelete: false,
+        }
+    },
+    updated() {
+        if (this.onceData.edit && !this.isEdit) { // клацнули на edit
+            this.isEdit = true;
+            this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
+        }
+        if (!this.onceData.edit && this.isEdit) {
+            this.isEdit = false;
+            this.$el.focus(); // ставим фокус на карточку
         }
     },
     methods: {
@@ -61,8 +80,16 @@ export default {
         editMode() {
             this.$emit("updateCard", "note", "edit", this.onceData.id, this.title, this.text, 0, false);
         },
+        deleteCard(mode) {
+            if (mode == "yes") {
+                this.$emit("updateCard", "note", "delete", this.onceData.id, this.title, this.text, 0, false);
+            }
+            if (mode == "no") {
+                this.isDelete = false;
+            }
+        },
         deleteMode() {
-            this.$emit("updateCard", "note", "delete", this.onceData.id, this.title, this.text, 0, false);
+            this.isDelete = !this.isDelete;
         }
     }
 }

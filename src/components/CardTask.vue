@@ -1,9 +1,9 @@
 <template>
-    <div class="card">
+    <div class="card" tabindex="0">
 
         <div class="card-header">
 
-            <input placeholder="Название задачи" type="text" v-if="onceData.edit" v-model="title">
+            <input v-on:keyup.enter="updateCard" placeholder="Название задачи" type="text" v-if="onceData.edit" v-model="title" ref="titleDOM">
             <h3 v-else>{{ title }}</h3>
 
             <div class="card-header-links" v-if="!onceData.edit">
@@ -28,10 +28,17 @@
                 </div>
             </div>
             <div class="card-footer-add">
-                <svg @click="addNewItem"><use xlink:href="../assets//main.svg#icon_add"></use></svg>
-                <svg v-if="!onceData.edit" @click="editMode"><use xlink:href="../assets/main.svg#icon_pencil"></use></svg>
-                <svg v-if="!onceData.edit" @click="deleteMode"><use xlink:href="../assets/main.svg#icon_close"></use></svg>
-                <span v-if="onceData.edit" @click="updateCard" data-label="checkbox"></span>
+                <button @click="addNewItem" class="card-footer-add-new"><svg><use xlink:href="../assets//main.svg#icon_add"></use></svg></button>
+                <button v-if="!onceData.edit" @click="editMode" class="card-footer-add-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
+                <button v-if="!onceData.edit" @click="deleteMode" class="card-footer-add-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
+                <button v-if="onceData.edit" @click="updateCard" aria-label="checkbox"></button>
+                <div class="card-footer-add-dropdown" v-if="isDelete">
+                    <h5>Удалить задачу?</h5>
+                    <div class="card-footer-add-dropdown-content">
+                        <button @click="deleteCard('yes')">Да</button>
+                        <button @click="deleteCard('no')">Нет</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -44,7 +51,19 @@ export default {
     data() {
         return {
             title: this.onceData.info.title,
-            text: ""
+            text: "",
+            isEdit: false,
+            isDelete: false
+        }
+    },
+    updated() {
+        if (this.onceData.edit && !this.isEdit) { // клацнули на edit
+            this.isEdit = true;
+            this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
+        }
+        if (!this.onceData.edit && this.isEdit) {
+            this.isEdit = false;
+            this.$el.focus(); // ставим фокус на карточку
         }
     },
     methods: {
@@ -79,6 +98,7 @@ export default {
             }
         },
         updateCard() {
+            this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
             if (!this.title) {
                 alert("Заполните поле названия задачи")
             }
@@ -93,7 +113,15 @@ export default {
             this.$emit("updateCard", "task", "edit", this.onceData.id, this.title, this.text, 0, false);
         },
         deleteMode() {
-            this.$emit("updateCard", "task", "delete", this.onceData.id, this.title, this.text, 0, false);
+            this.isDelete = !this.isDelete;
+        },
+        deleteCard(mode) {
+            if (mode == "yes") {
+                this.$emit("updateCard", "task", "delete", this.onceData.id, this.title, this.text, 0, false);
+            }
+            if (mode == "no") {
+                this.isDelete = false;
+            }
         },
         addNewItem() {
             this.$emit("updateCard", "task", "newItem", this.onceData.id, this.title, this.text, 0, false);
