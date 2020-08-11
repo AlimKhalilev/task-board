@@ -67,7 +67,7 @@ export default {
             this.$el.focus(); // ставим фокус на карточку
         }
         if (this.isAddItem) { // добавили новый пункт
-            let innnd = (document.getElementsByClassName("card")[0].querySelectorAll(".card-container-items-item").length - 1);
+            let innnd = (this.$el.querySelectorAll(".card-container-items-item").length - 1);
             this.$el.getElementsByClassName("card-container-items-item")[innnd].querySelector("textarea").focus();
             this.isAddItem = false;
         }

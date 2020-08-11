@@ -178,6 +178,9 @@ export default {
                             })
                             .then(response => {
                                 if (response.data.status) { // если удаление успешно
+                                    if (this.maxCardID == this.mainData[index].id) { // если мы удалили последнюю карточку
+                                        this.maxCardID = this.mainData[index-1].id // присваиваем ID последней карты предыдущ. карту
+                                    }
                                     this.mainData.splice(index, 1); // с index элемента удалить 1
                                 }
                                 else {
@@ -209,7 +212,11 @@ export default {
                                     console.log(response.data);
 
                                     if (response.data.delete) { // удаление task
+                                        if (this.maxCardID == this.mainData[index].id) { // если мы удалили последнюю карточку
+                                            this.maxCardID = this.mainData[index-1].id; // присваиваем ID последней карты предыдущ. карту
+                                        }
                                         this.mainData.splice(index, 1); // с index элемента удалить 1
+                                        this.maxTaskID = this.getMaxTaskId();
                                     }
 
                                     if (response.data.edit) { // редактирование task
@@ -218,6 +225,7 @@ export default {
 
                                         if (response.data.id) { // если добавление task
                                             this.maxCardID = response.data.id;
+                                            this.maxTaskID = response.data.taskItemArr[response.data.taskItemArr.length - 1];
                                             this.mainData[index].id = response.data.id; // присвоить ключ, полученный с синхры api database
                                             this.mainData[index].info.dateAdd = response.data.date;
                                             this.mainData[index].info.timeAdd = response.data.time;
@@ -296,11 +304,15 @@ export default {
 
                                             if (response.data.delete) { // если удаление
                                                 this.mainData[index].info.tasksInfo.splice(taskIndex, 1); // с taskIndex элемента удалить 1
+                                                this.maxTaskID = this.getMaxTaskId();
                                             }
 
                                             if (response.data.deleteLast) { // если удаляется последний элемент (удалить всю карточку)
-                                                this.mainData.splice(index, 1); // с index элемента удалить 1
-                                            }
+                                                if (this.maxCardID == this.mainData[index].id) { // если мы удалили последнюю карточку
+                                                    this.maxCardID = this.mainData[index-1].id; // присваиваем ID последней карты предыдущ. карту
+                                                    this.maxTaskID = this.getMaxTaskId();
+                                                }
+                                            } 
 
                                             if (response.data.edit) {
                                                 mainTaskData.text = text;
@@ -359,16 +371,13 @@ export default {
             return (!this.mainData.length ? 1 : Number(this.mainData[this.mainData.length-1].id) + 1);
         },
         getMaxTaskId() {
-            let dataTaskCount = 0;
-            let dataCount = this.mainData.length;
+            let dataTaskIndex = 0;
             let arrMax = [];
 
-            for (let i = dataCount-1; i >= 0; i--) { // перебор всех карточек
-                if (this.mainData[i].type == "task") { // останавливаемся на task card (перебор с конца)
-                    dataTaskCount = this.mainData[i].info.tasksInfo.length - 1
-                    if (dataTaskCount != -1) {
-                        arrMax.push(this.mainData[i].info.tasksInfo[dataTaskCount].id); // (возвращаем самый последний id)
-                    }
+            for (let i = 0; i < this.mainData.length; i++) { // перебор всех карточек
+                if (this.mainData[i].type == "task") { // выбираем все карточки Task
+                    dataTaskIndex = this.mainData[i].info.tasksInfo.length - 1
+                    arrMax.push(this.mainData[i].info.tasksInfo[dataTaskIndex].id); // (возвращаем самый последний id)
                 }
             }
             return (!arrMax ? 1 : Math.max.apply(null, arrMax));
