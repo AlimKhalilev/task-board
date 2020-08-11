@@ -2,7 +2,7 @@
     <section class="section-outer section-main">
         <div class="section-inner">
             <Pane @openAuth="openAuth" @addCard="addCard" v-bind:mainData="mainData"/>
-            <div class="section-main-cards">
+            <div class="section-main-cards" v-bind:class="{empty: !mainData.length}">
                 <div v-if="isLoadData && mainData.length == 0" class="section-main-cards-empty">
                     <h2>Добро пожаловать в TaskBoard!</h2>
                     <h3>Добавьте свою первую запись, нажав на <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg> слева</h3>
@@ -29,6 +29,10 @@ export default {
         }
     },
     updated() { // БЛОК ДЛЯ АНИМАЦИИ
+        let newCard = document.getElementsByClassName("card")[0].querySelector(".card-header > input"); // проверка на фокус при доб. карты
+        if (newCard != null) {
+            newCard.focus();
+        }
         if (!this.firstLoad) { // вызываем только 1 раз после первой загрузки
             let timeEqual = 0.2;
 
@@ -68,9 +72,6 @@ export default {
                     if (this.mainData.length >= 1) { // уже есть карточки в бд
                         this.maxCardID = Number(this.mainData[this.mainData.length-1].id);
                         this.maxTaskID = this.getMaxTaskId();
-                    }
-                    else { // если карточек нет
-                        document.querySelector(".section-main-cards").style = "display: flex";
                     }
                     this.isLoadData = true;
                 }
@@ -143,7 +144,8 @@ export default {
                                 text: text
                             })
                             .then(response => {
-                                if (response.data) { // если обновление карточки
+                                console.log(response.data);
+                                if (response.data.status) { // если успешно и обновление карточки
                                     this.mainData[index].edit = false;
                                     this.mainData[index].info.title = title;
                                     this.mainData[index].info.text = text;
@@ -175,7 +177,7 @@ export default {
                                 cardID: this.mainData[index].id
                             })
                             .then(response => {
-                                if (response.data) { // если удаление успешно
+                                if (response.data.status) { // если удаление успешно
                                     this.mainData.splice(index, 1); // с index элемента удалить 1
                                 }
                                 else {
@@ -202,7 +204,7 @@ export default {
                                 text: text
                             })
                             .then(response => {
-                                if (response.data) { // если обновление карточки
+                                if (response.data.status) { // если обновление карточки TASK || успешный ответ
                                     console.log(mode);
                                     console.log(response.data);
 
@@ -279,7 +281,7 @@ export default {
                                         text: text
                                     })
                                     .then(response => {
-                                        if (response.data) { // если обновление карточки
+                                        if (response.data.status) { // если обновление карточки || успешно
 
                                             if (response.data.complete) { // если чекбокс
                                                 mainTaskData.complete = response.data.complete;

@@ -53,7 +53,8 @@ export default {
             title: this.onceData.info.title,
             text: "",
             isEdit: false,
-            isDelete: false
+            isDelete: false,
+            isAddItem: false
         }
     },
     updated() {
@@ -64,6 +65,11 @@ export default {
         if (!this.onceData.edit && this.isEdit) {
             this.isEdit = false;
             this.$el.focus(); // ставим фокус на карточку
+        }
+        if (this.isAddItem) { // добавили новый пункт
+            let innnd = (document.getElementsByClassName("card")[0].querySelectorAll(".card-container-items-item").length - 1);
+            this.$el.getElementsByClassName("card-container-items-item")[innnd].querySelector("textarea").focus();
+            this.isAddItem = false;
         }
     },
     methods: {
@@ -103,9 +109,14 @@ export default {
                 alert("Заполните поле названия задачи")
             }
             else {
-                if (this.isTaskItemsEntered()) {
-                    this.text = this.getTaskItemsInfo();
+                if (this.onceData.id <= this.$parent.$parent.maxCardID) { // edit
                     this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
+                }
+                else { // add
+                    if (this.isTaskItemsEntered()) {
+                        this.text = this.getTaskItemsInfo();
+                        this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
+                    }
                 }
             }
         },
@@ -125,6 +136,7 @@ export default {
         },
         addNewItem() {
             this.$emit("updateCard", "task", "newItem", this.onceData.id, this.title, this.text, 0, false);
+            this.isAddItem = true;
         },
     },
     components: {

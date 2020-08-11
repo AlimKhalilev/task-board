@@ -28,6 +28,10 @@
             grid-template-columns: 1fr;
         }
 
+        &.empty {
+            display: flex; // когда вообще нет карточек
+        }
+
         &-empty {
             width: 100%;
             display: flex;

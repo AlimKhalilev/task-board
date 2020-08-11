@@ -5,7 +5,7 @@
         &-item {
             background-color: $color_checked;
             transition: 0.3s ease-in-out;
-            padding: 1rem;
+            padding: 0.9rem;
             cursor: pointer;
             @include boxShadowItem;
 
