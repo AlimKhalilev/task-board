@@ -13,7 +13,7 @@
             </div>
             <div class="card-container-items-item-edit-links">
                 <button v-if="!taskInfo.edit" @click="editItem"><svg ><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
-                <button v-if="!taskInfo.edit" @click="deleteMode"><svg ><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
+                <button @click="deleteMode"><svg class="delete-task"><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
                 <button v-if="taskInfo.edit" @click="addItem" aria-label="checkbox"></button>
                 <div class="card-container-items-item-edit-links-dropdown" v-if="isDelete">
                     <h5>Удалить задачу?</h5>

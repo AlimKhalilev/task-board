@@ -30,7 +30,7 @@
             <div class="card-footer-add">
                 <button @click="addNewItem" class="card-footer-add-new"><svg><use xlink:href="../assets//main.svg#icon_add"></use></svg></button>
                 <button v-if="!onceData.edit" @click="editMode" class="card-footer-add-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
-                <button v-if="!onceData.edit" @click="deleteMode" class="card-footer-add-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
+                <button @click="deleteMode" class="card-footer-add-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
                 <button v-if="onceData.edit" @click="updateCard" aria-label="checkbox"></button>
                 <div class="card-footer-add-dropdown" v-if="isDelete">
                     <h5>Удалить задачу?</h5>
@@ -96,11 +96,17 @@ export default {
             return arrText;
         },
         updateCardItem(type, mode, id, title, text, taskid, complete) {
-            if (this.onceData.edit) { // если карточка еще редактируется, или не сохранена
-                alert("Завершите редактирование карточки")
-            }
-            else {
+            let EditIndex = 1500000000000;
+            if (id <= EditIndex) { // если карточка уже в бд
                 this.$emit("updateCard", type, mode, id, title, text, taskid, complete);
+            }
+            else { // если карточка еще не сохранена
+                if (mode == "deleteItem") { // если удаляем task item
+                    this.$emit("updateCard", type, mode, id, title, text, taskid, complete);
+                }
+                else {
+                    alert("Завершите редактирование карточки");
+                }
             }
         },
         updateCard() {

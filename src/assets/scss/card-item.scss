@@ -97,7 +97,7 @@
                     width: 0.75rem;
                     height: 0.75rem;
                     fill: $color_warning;
-                    margin-left: 0.4rem;
+                    margin-left: 0.45rem;
                 }
 
                 &-date, &-links {
@@ -106,7 +106,7 @@
                 }
 
                 &-date {
-                    padding-right: 0.3rem;
+                    padding-right: 0.45rem;
                     border-right: 1px solid $color_checked;
 
                     span {
@@ -154,8 +154,8 @@
                 }
 
                 &-links {
-                    button:nth-child(2) {
-                        svg {
+                    button {
+                        svg.delete-task {
                             fill: $color_error;
                         }
                     }
@@ -168,7 +168,7 @@
                         width: 1.2rem;
                         transform-origin: 70% 70%;
                         transform: rotate(-45deg) scale(0.7);
-                        margin: -0.5rem 0.1rem 0.3rem 0.1rem;
+                        margin: -0.5rem 0.1rem 0.3rem 0.3rem;
                         cursor: pointer;
                         transition: 0.3s ease-in-out;
 

@@ -92,7 +92,7 @@ export default {
         addCard(method) {
             if (method == "note") { // если запись
                 this.mainData.push(
-                    {id: this.getNewCardId(), type: "note", edit: true, info: // устанавливаем временный id для карты
+                    {id:Date.now(), type: "note", edit: true, info: // устанавливаем временный id для карты
                         {
                             title: "",
                             text: "",
@@ -104,7 +104,7 @@ export default {
             }
             else { // если задача
                 this.mainData.push(
-                    {id:this.getNewCardId(), type: "task", edit: true, info:
+                    {id:Date.now(), type: "task", edit: true, info:
                         {
                             title: "",
                             dateAdd: this.getNowDate(),
@@ -113,7 +113,7 @@ export default {
                             timeComplete: "",
                             tasksInfo: [
                                 {
-                                    id: this.getMaxTaskId() + 1,
+                                    id: Date.now()+1,
                                     text: "",
                                     complete: false,
                                     dateAdd: this.getNowDate(),
@@ -129,7 +129,12 @@ export default {
             }
         },
         updateCard(type, mode, id, title, text, taskid, complete) {
+            let EditIndex = 1500000000000;
             let index = this.getIndexDataById(id) // получаем index по id
+            if (mode == "delete" && this.mainData[index].id > EditIndex) { // если удаляем, но карточка еще не в бд
+                this.mainData.splice(index, 1); // с index элемента удалить 1 
+                return;
+            }
             if (index != -1) {
                 if (type == "note") { // действия с записями
                     if (mode == "update") {
@@ -250,7 +255,7 @@ export default {
                     if (mode == "newItem") { // добавление нового пункта
                         this.mainData[index].info.tasksInfo.push(
                             {
-                                id: Date.now(), // дабы исключить совпадающие ключи
+                                id: Date.now(), // уникальный ключ для новой задачи
                                 text: "",
                                 complete: false,
                                 dateAdd: this.getNowDate(),
@@ -270,9 +275,16 @@ export default {
                                 mode = (mainTaskData.id > this.maxTaskID ? "addTaskItem" : "editTaskItem"); // получение точной инфы из task item
                             }
                             if (mode == "sendComplete" || mode == "addTaskItem" || mode == "editTaskItem" || mode == "deleteItem") { // если эдит или чекбокс
+                                
+                                if (mode == "deleteItem" && mainTaskData.id > EditIndex) { // удаляем пустышку задачу
+                                    this.mainData[index].info.tasksInfo.splice(taskIndex, 1);
+                                    return
+                                }
+
                                 if (mode == "sendComplete" && this.checkFullComplete(index)) {
                                     mode = "sendCompleteFull";
                                 }
+
                                 if (mode == "deleteItem" && this.mainData[index].info.tasksInfo.length == 1) { // если удаляется пункт и он последний
                                     mode = "deleteItemLast";
                                 }
@@ -366,9 +378,6 @@ export default {
                 }
             });
             return backId;
-        },
-        getNewCardId() { // получение нового id для новой карточки
-            return (!this.mainData.length ? 1 : Number(this.mainData[this.mainData.length-1].id) + 1);
         },
         getMaxTaskId() {
             let dataTaskIndex = 0;

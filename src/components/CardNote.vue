@@ -29,7 +29,7 @@
             </div>
             <div class="card-footer-edit">
                 <button v-if="!onceData.edit" @click="editMode" class="card-footer-edit-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
-                <button v-if="!onceData.edit" @click="deleteMode" class="card-footer-edit-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
+                <button @click="deleteMode" class="card-footer-edit-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
                 <button v-if="onceData.edit" @click="updateCard" aria-label="checkbox"></button>
                 <div class="card-footer-edit-dropdown" v-if="isDelete">
                     <h5>Удалить запись?</h5>
