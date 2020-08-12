@@ -5,7 +5,7 @@
                 <h2>Восстановление <br> пароля</h2>
             </div>
             <form class="form-container-inner" v-on:submit.prevent="sendAuth">
-                <input type="text" name="login" placeholder="Логин" v-model="login">
+                <input type="text" name="login" placeholder="Логин или почта" v-model="login">
                 <input type="submit" value="Восстановить">
                 <div class="validate" v-if="validateMsg" v-bind:class="{success: successReg}">
                     <p v-html="validateMsg"></p>

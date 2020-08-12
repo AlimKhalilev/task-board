@@ -74,6 +74,7 @@ export default {
         deleteItem(mode) {
             if (mode == "yes") {
                 this.$emit("updateCardItem", "task", "deleteItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается delete mode
+                this.isDelete = false;
             }
             if (mode == "no") {
                 this.isDelete = false;

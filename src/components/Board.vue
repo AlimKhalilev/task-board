@@ -277,6 +277,10 @@ export default {
                             if (mode == "sendComplete" || mode == "addTaskItem" || mode == "editTaskItem" || mode == "deleteItem") { // если эдит или чекбокс
                                 
                                 if (mode == "deleteItem" && mainTaskData.id > EditIndex) { // удаляем пустышку задачу
+                                    if (this.mainData[index].info.tasksInfo.length == 1) { // если в пустышке удаляем последний TaskItem
+                                        alert("В карточке должна быть как минимум 1 задача!");
+                                        return;
+                                    }
                                     this.mainData[index].info.tasksInfo.splice(taskIndex, 1);
                                     return
                                 }
@@ -322,8 +326,9 @@ export default {
                                             if (response.data.deleteLast) { // если удаляется последний элемент (удалить всю карточку)
                                                 if (this.maxCardID == this.mainData[index].id) { // если мы удалили последнюю карточку
                                                     this.maxCardID = this.mainData[index-1].id; // присваиваем ID последней карты предыдущ. карту
-                                                    this.maxTaskID = this.getMaxTaskId();
                                                 }
+                                                this.mainData.splice(index, 1); // с index элемента удалить 1
+                                                this.maxTaskID = this.getMaxTaskId();
                                             } 
 
                                             if (response.data.edit) {

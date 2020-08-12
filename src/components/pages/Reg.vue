@@ -51,14 +51,15 @@ export default {
                 axios // проверка на несуществование учетки в бд (1 нет, 0 есть)
                     .post(cookie.linkAPI, {
                         type: "checkReg",
-                        login: this.login
+                        login: this.login,
+                        mail: this.mail
                     })
                     .then(response => {
                         if (response.data.status) { // если учетки нет
                             this.sendRegData();
                         }
                         else { // если учетка есть
-                            this.validateMsg = 'Логин уже существует! <br>Придумайте другой';
+                            this.validateMsg = 'Данный логин или почта<br> уже используется! <br>Введите другие данные!';
                             this.successReg = false;
                             return 0;
                         }
