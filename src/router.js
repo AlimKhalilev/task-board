@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import Content from '@/components/pages/Content'
 import Reg from '@/components/pages/Reg'
 import Restore from '@/components/pages/Restore'
+import Change from '@/components/pages/Change'
 
 Vue.use(Router)
 
@@ -21,6 +22,10 @@ export default new Router({
         {
             path: '/restore',
             component: Restore
+        },
+        {
+            path: '/change',
+            component: Change
         }
     ]
 })

@@ -99,6 +99,23 @@ form button, form input[type="submit"] {
     background: lighten($color_bg_main, 10%); 
 }
 
+// vue toast
+
+.v-notices .v-toast.v-toast-error {
+    background-color: $color_error;
+}
+
+@media ($media_md) {
+    .v-notices.is-bottom {
+        padding: 2rem;
+
+        .v-toast.is-bottom-right {
+            align-self: stretch;
+        }
+    }
+}
+
+//
 
 @keyframes fadeIn {
     from {

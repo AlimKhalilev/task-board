@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import Toast from '@/components/Toast.vue'
 export default {
     props: ["taskInfo", "cardId"],
     data() {
@@ -59,7 +60,7 @@ export default {
     methods: {
         addItem() {
             if (!this.text) {
-                alert("Заполните поле текста задачи");
+                Toast.show("Заполните поле текста задачи");
             }
             else {
                 this.$emit("updateCardItem", "task", "addItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается только текст

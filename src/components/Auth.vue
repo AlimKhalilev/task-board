@@ -38,7 +38,7 @@ export default {
         sendAuth() {
             if (this.login == "" || this.password == "") { // проверка на заполненность полей
                 this.validateMsg = 'Заполните все поля!';
-                return 0;
+                return;
             }
             axios // запрос на авторизацию
                 .post(cookie.linkAPI, {

@@ -2,17 +2,18 @@
     <div class="form">
         <div class="form-container">
             <div class="form-container-header">
-                <h2>Восстановление <br> пароля</h2>
+                <h2>Смена пароля</h2>
             </div>
             <form class="form-container-inner" v-on:submit.prevent="sendAuth">
-                <input type="text" name="login" placeholder="Логин или почта" v-model="login">
-                <input type="submit" value="Восстановить">
+                <input type="text" name="pass" placeholder="Текущий пароль" v-model="pass">
+                <input type="text" name="pass_repeat" placeholder="Новый пароль" v-model="pass_new">
+                <input type="submit" value="Изменить">
                 <div class="validate" v-if="validateMsg" v-bind:class="{success: successReg}">
                     <p v-html="validateMsg"></p>
                 </div>
             </form>
             <div class="form-container-footer">
-                <span>Еще нет аккаунта? <router-link to="/reg">Регистрация</router-link></span>
+                <span>Вернуться на <router-link to="/">главную</router-link></span>
             </div>
         </div>
     </div>
@@ -24,37 +25,41 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            login: "",
+            pass: "",
+            pass_repeat: "",
+            pass_new: "",
             validateMsg: "",
             successReg: false
         }
     },
     mounted() {
-        document.title = "Восстановление пароля - TaskBoard"
+        document.title = "Смена пароля - TaskBoard"
     },
     methods: {
         sendAuth() {
-            if (this.login == "") { // проверка на заполненность полей
+            if (this.pass == "" || this.pass_new == "") { // проверка на заполненность полей
                 this.validateMsg = 'Заполните все поля!';
                 return;
             }
             axios // запрос на авторизацию
                 .post(cookie.linkAPI, {
-                    type: "sendRestore",
-                    login: this.login
+                    type: "sendChange",
+                    _ym_rwots: cookie.getCookie("_ym_rwots"),
+                    pass: this.pass,
+                    pass_new: this.pass_new
                 })
                 .then(response => {
                     if (response.data.status) { // успешно
                         this.successReg = true;
-                        this.validateMsg = 'Новый пароль отправлен <br>на вашу почту!';
+                        this.validateMsg = 'Пароль успешно сменён!';
                         setTimeout(() => this.$router.push({path: '/'}), 2000); // переход на главную страницу через 2 сек
                     }
                     else { // не успешно
                         if (response.data.message == "errorDatabase") {
                             this.validateMsg = 'Произошла ошибка.. <br>Повторите попытку';
                         }
-                        if (response.data.message == "noLogin") {
-                            this.validateMsg = 'Учётная запись не найдена..';
+                        if (response.data.message == "noPass") {
+                            this.validateMsg = 'Неверный текущий пароль..';
                         }
                     }
                 }

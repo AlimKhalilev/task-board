@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import Toast from '@/components/Toast.vue'
 import CardTaskItem from '@/components/CardTaskItem.vue'
 export default {
     props: ["onceData"],
@@ -79,7 +80,7 @@ export default {
             for (let i = 0; taskCount > i; i++) {
                 if (this.$refs.taskItems[i].taskInfo.edit) { // если при клике на карту какой-то из task в состоянии edit
                     if (!this.$refs.taskItems[i].text) { // если пустое поле
-                        alert("Заполните поле №" + (i+1));
+                        Toast.show("Заполните поле №" + (i+1));
                         isHasText = 0;
                         break;
                     }
@@ -105,14 +106,14 @@ export default {
                     this.$emit("updateCard", type, mode, id, title, text, taskid, complete);
                 }
                 else {
-                    alert("Завершите редактирование карточки");
+                    Toast.show("Завершите редактирование карточки");
                 }
             }
         },
         updateCard() {
             this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
             if (!this.title) {
-                alert("Заполните поле названия задачи")
+                Toast.show("Заполните поле названия задачи");
             }
             else {
                 if (this.onceData.id <= this.$parent.$parent.maxCardID) { // edit

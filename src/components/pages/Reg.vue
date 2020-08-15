@@ -45,7 +45,6 @@ export default {
         sendReg() {
             if (this.login == "" || this.password == "" || this.name == "" || this.surname == "" || this.mail == "") { // проверка на заполненность полей
                 this.validateMsg = 'Заполните все поля!';
-                return 0;
             }
             else {
                 axios // проверка на несуществование учетки в бд (1 нет, 0 есть)

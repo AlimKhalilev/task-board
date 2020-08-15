@@ -17,6 +17,7 @@
 import Pane from '@/components/Pane.vue'
 import Card from '@/components/Card.vue'
 import cookie from '@/components/Cookie.vue'
+import Toast from '@/components/Toast.vue'
 import axios from 'axios'
 export default {
     data() {
@@ -277,8 +278,8 @@ export default {
                             if (mode == "sendComplete" || mode == "addTaskItem" || mode == "editTaskItem" || mode == "deleteItem") { // если эдит или чекбокс
                                 
                                 if (mode == "deleteItem" && mainTaskData.id > EditIndex) { // удаляем пустышку задачу
-                                    if (this.mainData[index].info.tasksInfo.length == 1) { // если в пустышке удаляем последний TaskItem
-                                        alert("В карточке должна быть как минимум 1 задача!");
+                                    if (this.mainData[index].info.tasksInfo.length == 1) { // запрещаем удаление последнего элемента задачи
+                                        Toast.show("В карточке должна быть как минимум 1 задача!");
                                         return;
                                     }
                                     this.mainData[index].info.tasksInfo.splice(taskIndex, 1);

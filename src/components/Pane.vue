@@ -2,8 +2,10 @@
     <div class="section-main-pane">
         <div class="account">
             <h4 class="account-name">
-                <svg><use xlink:href="../assets/main.svg#icon_user"></use></svg>
-                <span>{{ login }}</span>
+                <router-link to="/change">
+                    <svg><use xlink:href="../assets/main.svg#icon_user"></use></svg>
+                    <span>{{ login }}</span>
+                </router-link>
             </h4>
             <div class="account-links">
                 <div class="account-links-icon add_card" tabindex="0">

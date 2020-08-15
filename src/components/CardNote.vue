@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import Toast from '@/components/Toast.vue'
 export default {
     props: ["onceData"],
     data() {
@@ -68,10 +69,10 @@ export default {
     methods: {
         updateCard() {
             if (!this.title) { // пустая строка ложь и наоборот
-                alert("Заполните поле названия записи")
+                Toast.show("Заполните поле названия записи!");
             }
             if (this.title && !this.text) {
-                alert("Заполните поле текста записи")
+                Toast.show("Заполните поле текста записи!");
             }
             if (this.title && this.text) {
                 this.$emit("updateCard", "note", "update", this.onceData.id, this.title, this.text, 0, false);

@@ -38,19 +38,26 @@
             &-name {
                 display: flex;
                 align-items: center;
-                transition: 0.3s ease-in-out;
-                cursor: pointer;
 
-                span {
-                    margin-left: 0.5rem;
-                    padding-top: 0.2rem;
-                }
+                a {
+                    display: flex;
+                    text-decoration: none;
 
-                &:hover {
-                    color: $color_success;
+                    span {
+                        color: $color_main;
+                        transition: 0.3s ease-in-out;
+                        margin-left: 0.5rem;
+                        padding-top: 0.2rem;
+                    }
 
-                    svg {
-                        fill: $color_success;
+                    &:hover {
+                        span {
+                            color: $color_success;
+                        }
+
+                        svg {
+                            fill: $color_success;
+                        }
                     }
                 }
             }

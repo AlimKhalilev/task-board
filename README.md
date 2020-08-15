@@ -34,19 +34,15 @@ npm install sass-loader node-sass style-loader --save-dev
 ### Подключение axios
 ```
 npm install axios
-```
-
-### Подключение moment (работа с временем JS)
-```
-npm install moment
-```
-
-### Вставка в шаблон .vue
-```
 import axios from 'axios'
 ```
 
 ### Работа с компонентом Slide (для шторки в моб.адаптиве)
 ```
 npm install vue-slide-up-down
+```
+
+### Оповещения (toast)
+```
+npm install vue-toast-notification
 ```
