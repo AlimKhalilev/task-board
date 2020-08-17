@@ -30,14 +30,17 @@ export default {
         }
     },
     updated() { // БЛОК ДЛЯ АНИМАЦИИ
-        let newCard = document.getElementsByClassName("card")[0].querySelector(".card-header > input"); // проверка на фокус при доб. карты
-        if (newCard != null) {
-            newCard.focus();
+        if (this.mainData.length >= 1) { // если уже загрузились и карточки есть
+            let newCard = document.getElementsByClassName("card")[0].querySelector(".card-header > input"); // проверка на фокус при доб. карты
+            if (newCard != null) {
+                newCard.focus();
+            }
         }
         if (!this.firstLoad) { // вызываем только 1 раз после первой загрузки
             let timeEqual = 0.2;
 
-            if (!document.querySelectorAll(".card").length) { // если карточек нет
+            if (!this.mainData.length) { // если карточек нет
+                
                 let elem = document.querySelector(".section-main-cards-empty");
                 elem.style = 'opacity: 0; animation: fadeIn 0.7s ease-in-out 0s forwards';
                 elem.addEventListener('animationend', () => {
