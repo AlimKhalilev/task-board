@@ -191,7 +191,12 @@ export default {
                             .then(response => {
                                 if (response.data.status) { // если удаление успешно
                                     if (this.maxCardID == this.mainData[index].id) { // если мы удалили последнюю карточку
-                                        this.maxCardID = this.mainData[index-1].id // присваиваем ID последней карты предыдущ. карту
+                                        if (index == 0) { // если карточек больше нет
+                                            this.maxCardID = 0;
+                                        }
+                                        else {
+                                            this.maxCardID = this.mainData[index-1].id // присваиваем ID последней карты предыдущ. карту
+                                        }
                                     }
                                     this.mainData.splice(index, 1); // с index элемента удалить 1
                                 }
@@ -203,8 +208,6 @@ export default {
                     }
                 }
                 else { // действия с задачей
-                    //console.log(mode, taskid, (this.mainData[index].id > this.maxCardID ? "addTask" : "editTask"));
-                    //console.log((this.mainData[index].id > this.maxCardID ? "addTask" : "editTask"))
                     if (mode == "add") {
                         mode = (this.mainData[index].id > this.maxCardID ? "addTask" : "editTask");
                     }
@@ -220,12 +223,16 @@ export default {
                             })
                             .then(response => {
                                 if (response.data.status) { // если обновление карточки TASK || успешный ответ
-                                    console.log(mode);
                                     console.log(response.data);
 
                                     if (response.data.delete) { // удаление task
                                         if (this.maxCardID == this.mainData[index].id) { // если мы удалили последнюю карточку
-                                            this.maxCardID = this.mainData[index-1].id; // присваиваем ID последней карты предыдущ. карту
+                                            if (index == 0) { // если карточек больше нет
+                                                this.maxCardID = 0;
+                                            }
+                                            else {
+                                                this.maxCardID = this.mainData[index-1].id // присваиваем ID последней карты предыдущ. карту
+                                            }
                                         }
                                         this.mainData.splice(index, 1); // с index элемента удалить 1
                                         this.maxTaskID = this.getMaxTaskId();
@@ -401,7 +408,7 @@ export default {
                     arrMax.push(this.mainData[i].info.tasksInfo[dataTaskIndex].id); // (возвращаем самый последний id)
                 }
             }
-            return (!arrMax ? 1 : Math.max.apply(null, arrMax));
+            return (!arrMax.length ? 0 : Math.max.apply(null, arrMax));
         },
         checkFullComplete(index) {
             let count = 0;
@@ -439,40 +446,5 @@ export default {
         Card
     }
 }
-
-        // if (screen.width > 768) { // добавляем гор. скролл на мышь если не моб.устройство mounted
-        //     let paneCards = document.getElementsByClassName('section-main-cards')[0];
-        //     if (paneCards.addEventListener) {
-        //         paneCards.addEventListener("mousewheel", this.scrollHorizontally, false); // IE9, Chrome, Safari, Opera
-        //         paneCards.addEventListener("DOMMouseScroll", this.scrollHorizontally, false); // Firefox
-        //     } 
-        //     else {
-        //         paneCards.attachEvent("onmousewheel", this.scrollHorizontally); // IE 6/7/8
-        //     }
-        // }
-
-        //         scrollHorizontally(e) { // method
-        //     let needScroll = true; // скролл нужен
-
-        //     if (e.target.closest(".card") != null) { // ищем карточку
-        //         let containerCard = e.target.closest(".card").querySelector(".card-container"); // берем класс container
-        //         if (e.target.closest(".card-container") && containerCard.scrollHeight != containerCard.offsetHeight) { // если есть скролл и это 100% container
-        //             needScroll = false; // скролл не нужен
-        //         }
-        //     }
-
-        //     if (needScroll) {
-        //         let paneCards = document.getElementsByClassName('section-main-cards')[0];
-        //         let scrollSpeed = 100;
-        //         let scrollCount = paneCards.scrollLeft;
-        //         e = window.event || e;
-        //         let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-        //         scrollCount -= (delta*scrollSpeed);
-        //         //paneCards.scrollTo({left: scrollCount, behavior: 'smooth'});
-        //         paneCards.scrollLeft = scrollCount;
-        //         e.preventDefault();
-        //     }
-
-        // },
 
 </script>
