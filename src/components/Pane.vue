@@ -9,7 +9,7 @@
             </h4>
             <div class="account-links">
                 <div class="account-links-icon add_card" tabindex="0">
-                    <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg>
+                    <svg><use xlink:href="../assets/main.svg#icon_add"></use></svg>
                     <div class="account-links-icon-dropdown">
                         <button tabindex="0" @click="addCard('task')">Добавить задачу</button>
                         <button tabindex="0" @click="addCard('note')">Добавить запись</button>

@@ -116,7 +116,7 @@ export default {
                 Toast.show("Заполните поле названия задачи");
             }
             else {
-                if (this.onceData.id <= this.$parent.$parent.maxCardID) { // edit
+                if (this.onceData.id <= this.$parent.maxCardID) { // edit
                     this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
                 }
                 else { // add

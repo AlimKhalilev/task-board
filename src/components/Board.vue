@@ -7,7 +7,12 @@
                     <h2>Добро пожаловать в TaskBoard!</h2>
                     <h3>Добавьте свою первую запись, нажав на <svg><use xlink:href="../assets//main.svg#icon_add"></use></svg> слева</h3>
                 </div>
-                <Card @updateCard="updateCard" v-for="onceData in filterData(mainData)" :key="onceData.id" v-bind:onceData="onceData"/>
+
+                <template v-for="onceData in filterData(mainData)">
+                    <CardNote :key="onceData.id" @updateCard="updateCard" v-if="onceData.type == 'note'" v-bind:onceData="onceData"/>
+                    <CardTask :key="onceData.id" @updateCard="updateCard" v-else v-bind:onceData="onceData"/>
+                </template>
+
             </div>
         </div>
     </section>
@@ -15,7 +20,8 @@
 
 <script>
 import Pane from '@/components/Pane.vue'
-import Card from '@/components/Card.vue'
+import CardNote from '@/components/CardNote.vue'
+import CardTask from '@/components/CardTask.vue'
 import cookie from '@/components/Cookie.vue'
 import Toast from '@/components/Toast.vue'
 import axios from 'axios'
@@ -258,7 +264,7 @@ export default {
                                     }
                                 }
                                 else {
-                                    console.log("Data error");
+                                    console.log("Error data Update Task");
                                 }
                             })
                             .catch(error => console.log(error));
@@ -443,7 +449,8 @@ export default {
     },
     components: {
         Pane,
-        Card
+        CardNote,
+        CardTask,
     }
 }
 
