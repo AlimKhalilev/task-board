@@ -62,8 +62,11 @@ export default {
             this.firstLoad = true;
         }
     },
-    mounted() {
+    beforeCreate() {
         document.title = "Главная - TaskBoard"
+    },
+    mounted() {
+        
 
         axios // запрос на получшение всех карточек из бд
             .post(cookie.linkAPI, {

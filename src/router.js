@@ -13,7 +13,8 @@ export default new Router({
     routes: [
         {
             path: '/',
-            component: Content
+            component: Content,
+            //meta: {title: "Главная - TaskBoard"}
         },
         {
             path: '/reg',
