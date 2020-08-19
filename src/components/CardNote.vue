@@ -3,7 +3,7 @@
 
         <div class="card-header">
 
-            <input v-on:keyup.enter="updateCard" placeholder="Название записи" type="text" v-if="onceData.edit" v-model="title" ref="titleDOM">
+            <input v-on:keydown.ctrl.enter="updateCard" placeholder="Название записи" type="text" v-if="onceData.edit" v-model="title" ref="titleDOM">
             <h3 v-else>{{ title }}</h3>
 
             <div class="card-header-links" v-if="!onceData.edit">
@@ -14,7 +14,7 @@
         <div class="card-container">
             <div class="card-container-items">
                 <div class="card-container-items-content">
-                    <textarea v-on:keyup.ctrl.enter="updateCard" placeholder="Текст записи" type="text" v-if="onceData.edit" v-model="text"></textarea>
+                    <textarea v-on:keydown.ctrl.enter="updateCard" placeholder="Текст записи" type="text" v-if="onceData.edit" v-model="text" ref="textDOM"></textarea>
                     <span v-else>{{ text }}</span>
                 </div>
             </div>
@@ -70,9 +70,11 @@ export default {
         updateCard() {
             if (!this.title) { // пустая строка ложь и наоборот
                 Toast.show("Заполните поле названия записи!");
+                this.$refs.titleDOM.focus();
             }
             if (this.title && !this.text) {
                 Toast.show("Заполните поле текста записи!");
+                this.$refs.textDOM.focus();
             }
             if (this.title && this.text) {
                 this.$emit("updateCard", "note", "update", this.onceData.id, this.title, this.text, 0, false);

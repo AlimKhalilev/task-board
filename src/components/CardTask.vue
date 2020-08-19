@@ -3,7 +3,7 @@
 
         <div class="card-header">
 
-            <input v-on:keyup.enter="updateCard" placeholder="Название задачи" type="text" v-if="onceData.edit" v-model="title" ref="titleDOM">
+            <input v-on:keydown.ctrl.enter="updateCard" placeholder="Название задачи" type="text" v-if="onceData.edit" v-model="title" ref="titleDOM">
             <h3 v-else>{{ title }}</h3>
 
             <div class="card-header-links" v-if="!onceData.edit">
@@ -68,8 +68,7 @@ export default {
             this.$el.focus(); // ставим фокус на карточку
         }
         if (this.isAddItem) { // добавили новый пункт
-            let innnd = (this.$el.querySelectorAll(".card-container-items-item").length - 1);
-            this.$el.getElementsByClassName("card-container-items-item")[innnd].querySelector("textarea").focus();
+            this.$refs.taskItems[this.$refs.taskItems.length - 1].setTextFocus(); // focus на последний item
             this.isAddItem = false;
         }
     },
@@ -81,6 +80,7 @@ export default {
                 if (this.$refs.taskItems[i].taskInfo.edit) { // если при клике на карту какой-то из task в состоянии edit
                     if (!this.$refs.taskItems[i].text) { // если пустое поле
                         Toast.show("Заполните поле №" + (i+1));
+                        this.$refs.taskItems[i].setTextFocus(); // ставим focus на text item
                         isHasText = 0;
                         break;
                     }
@@ -111,9 +111,9 @@ export default {
             }
         },
         updateCard() {
-            this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
             if (!this.title) {
                 Toast.show("Заполните поле названия задачи");
+                this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
             }
             else {
                 if (this.onceData.id <= this.$parent.maxCardID) { // edit
@@ -144,7 +144,7 @@ export default {
         addNewItem() {
             this.$emit("updateCard", "task", "newItem", this.onceData.id, this.title, this.text, 0, false);
             this.isAddItem = true;
-        },
+        }
     },
     components: {
         CardTaskItem

@@ -3,7 +3,7 @@
         <div class="card-container-items-item-text" @click="sendCompleteMode">
             <input type="checkbox" v-model="complete" :disabled="complete" v-if="!taskInfo.edit">
             <span v-if="!taskInfo.edit">{{ text }}</span>
-            <textarea v-on:keyup.ctrl.enter="addItem" placeholder="Текст задачи" type="text" v-if="taskInfo.edit" v-model="text" ref="textDOM"></textarea>
+            <textarea v-on:keydown.ctrl.enter="addItem" placeholder="Текст задачи" type="text" v-if="taskInfo.edit" v-model="text" ref="textDOM"></textarea>
         </div>
         <div class="card-container-items-item-edit">
             <div class="card-container-items-item-edit-date">
@@ -50,7 +50,7 @@ export default {
     updated() {
         if (this.taskInfo.edit && !this.isEdit) { // клацнули на edit
             this.isEdit = true;
-            this.$refs.textDOM.focus(); // ставим focus на title, когда EDIT MODE
+            this.setTextFocus(); // ставим focus на title, когда EDIT MODE
         }
         if (!this.taskInfo.edit && this.isEdit) {
             this.isEdit = false;
@@ -95,6 +95,9 @@ export default {
             if (mode == "no") {
                 this.isComplete = false;
             }
+        },
+        setTextFocus() {
+            this.$refs.textDOM.focus();
         }
     }
 }

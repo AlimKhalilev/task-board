@@ -436,7 +436,7 @@ export default {
         getNowDate() {
             let today = new Date();
             let dd = String(today.getDate()).padStart(2, '0');
-            let mm = String(today.getMonth()).padStart(2, '0');
+            let mm = String(today.getMonth()+1).padStart(2, '0'); // мясяцы начинаются с 0 (0 - январь)
             let yy = String(today.getFullYear()).substring(2, 4);
             return `${dd}.${mm}.${yy}`;
         },
