@@ -92,7 +92,14 @@ export default {
             }
         },
         deleteMode() {
-            this.isDelete = !this.isDelete;
+            if (this.onceData.edit) {
+                this.onceData.edit = false;
+                this.text = this.onceData.info.text;
+                this.title = this.onceData.info.title;
+            }
+            else {
+                this.isDelete = !this.isDelete;
+            }
         },
         lineSkip(text) {
             return text.replace(/\n/g, "<br>");

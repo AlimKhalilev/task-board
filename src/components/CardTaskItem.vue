@@ -70,7 +70,13 @@ export default {
             this.$emit("updateCardItem", "task", "editItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается edit true / false
         },
         deleteMode() {
-            this.isDelete = !this.isDelete;
+            if (this.taskInfo.edit) {
+                this.taskInfo.edit = false;
+                this.text = this.taskInfo.text;
+            }
+            else {
+                this.isDelete = !this.isDelete;
+            }
         },
         deleteItem(mode) {
             if (mode == "yes") {

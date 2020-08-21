@@ -131,7 +131,13 @@ export default {
             this.$emit("updateCard", "task", "edit", this.onceData.id, this.title, this.text, 0, false);
         },
         deleteMode() {
-            this.isDelete = !this.isDelete;
+            if (this.onceData.edit) {
+                this.onceData.edit = false;
+                this.title = this.onceData.info.title;
+            }
+            else {
+                this.isDelete = !this.isDelete;
+            }
         },
         deleteCard(mode) {
             if (mode == "yes") {
