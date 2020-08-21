@@ -15,7 +15,7 @@
             <div class="card-container-items">
                 <div class="card-container-items-content">
                     <textarea v-on:keydown.ctrl.enter="updateCard" placeholder="Текст записи" type="text" v-if="onceData.edit" v-model="text" ref="textDOM"></textarea>
-                    <span v-else>{{ text }}</span>
+                    <span v-else v-html="lineSkip(text)"></span>
                 </div>
             </div>
         </div>
@@ -93,6 +93,9 @@ export default {
         },
         deleteMode() {
             this.isDelete = !this.isDelete;
+        },
+        lineSkip(text) {
+            return text.replace(/\n/g, "<br>");
         }
     }
 }

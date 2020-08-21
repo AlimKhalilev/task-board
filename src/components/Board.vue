@@ -162,7 +162,7 @@ export default {
                                 text: text
                             })
                             .then(response => {
-                                console.log(response.data);
+                                //console.log(response.data);
                                 if (response.data.status) { // если успешно и обновление карточки
                                     this.mainData[index].edit = false;
                                     this.mainData[index].info.title = title;
