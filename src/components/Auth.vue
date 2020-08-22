@@ -36,29 +36,28 @@ export default {
     },
     methods: {
         sendAuth() {
-            if (this.login == "" || this.password == "") { // проверка на заполненность полей
+            if (!this.login || !this.password) { // проверка на заполненность полей
                 this.validateMsg = 'Заполните все поля!';
-                return;
             }
-            axios // запрос на авторизацию
-                .post(cookie.linkAPI, {
-                    type: "sendAuth",
-                    login: this.login,
-                    password: this.password
-                })
-                .then(response => {
-                    if (response.data.status) { // успешно
-                        cookie.setCookie("_ym_rwots", response.data.rwots, 7);
-                        cookie.setCookie("_ym_gflne", response.data.gflne, 7);
-                        this.$emit("openAuth", 1); // зарегались
-                    }
-                    else { // не успешно
-                        this.validateMsg = 'Введены неверные данные!';
-                        return 0;
-                    }
-                }
-                )
-                .catch(error => console.log(error));
+            else {
+                axios // запрос на авторизацию
+                    .post(cookie.linkAPI, {
+                        type: "sendAuth",
+                        login: this.login,
+                        password: this.password
+                    })
+                    .then(response => {
+                        if (response.data.status) { // успешно
+                            cookie.setCookie("_ym_rwots", response.data.rwots, 7);
+                            cookie.setCookie("_ym_gflne", response.data.gflne, 7);
+                            this.$emit("openAuth", 1); // зарегались
+                        }
+                        else { // не успешно
+                            this.validateMsg = 'Введены неверные данные!';
+                        }
+                    })
+                    .catch(error => console.log(error));
+            }
         }
     }
 }

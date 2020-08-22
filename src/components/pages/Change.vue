@@ -37,34 +37,34 @@ export default {
     },
     methods: {
         sendAuth() {
-            if (this.pass == "" || this.pass_new == "") { // проверка на заполненность полей
+            if (!this.pass || !this.pass_new) { // проверка на заполненность полей
                 this.validateMsg = 'Заполните все поля!';
-                return;
             }
-            axios // запрос на авторизацию
-                .post(cookie.linkAPI, {
-                    type: "sendChange",
-                    _ym_rwots: cookie.getCookie("_ym_rwots"),
-                    pass: this.pass,
-                    pass_new: this.pass_new
-                })
-                .then(response => {
-                    if (response.data.status) { // успешно
-                        this.successReg = true;
-                        this.validateMsg = 'Пароль успешно сменён!';
-                        setTimeout(() => this.$router.push({path: '/'}), 2000); // переход на главную страницу через 2 сек
-                    }
-                    else { // не успешно
-                        if (response.data.message == "errorDatabase") {
-                            this.validateMsg = 'Произошла ошибка.. <br>Повторите попытку';
+            else {
+                axios // запрос на авторизацию
+                    .post(cookie.linkAPI, {
+                        type: "sendChange",
+                        _ym_rwots: cookie.getCookie("_ym_rwots"),
+                        pass: this.pass,
+                        pass_new: this.pass_new
+                    })
+                    .then(response => {
+                        if (response.data.status) { // успешно
+                            this.successReg = true;
+                            this.validateMsg = 'Пароль успешно сменён!';
+                            setTimeout(() => this.$router.push({path: '/'}), 2000); // переход на главную страницу через 2 сек
                         }
-                        if (response.data.message == "noPass") {
-                            this.validateMsg = 'Неверный текущий пароль..';
+                        else { // не успешно
+                            if (response.data.message == "errorDatabase") {
+                                this.validateMsg = 'Произошла ошибка.. <br>Повторите попытку';
+                            }
+                            if (response.data.message == "noPass") {
+                                this.validateMsg = 'Неверный текущий пароль..';
+                            }
                         }
-                    }
-                }
-                )
-                .catch(error => console.log(error));
+                    })
+                    .catch(error => console.log(error));
+            }
         }
     }
 }

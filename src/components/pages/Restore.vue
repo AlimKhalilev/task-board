@@ -34,9 +34,8 @@ export default {
     },
     methods: {
         sendAuth() {
-            if (this.login == "") { // проверка на заполненность полей
+            if (!this.login) { // проверка на заполненность полей
                 this.validateMsg = 'Заполните все поля!';
-                return;
             }
             axios // запрос на авторизацию
                 .post(cookie.linkAPI, {
@@ -57,8 +56,7 @@ export default {
                             this.validateMsg = 'Учётная запись не найдена..';
                         }
                     }
-                }
-                )
+                })
                 .catch(error => console.log(error));
         }
     }

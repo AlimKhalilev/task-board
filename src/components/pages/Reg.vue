@@ -43,52 +43,37 @@ export default {
     },
     methods: {
         sendReg() {
-            if (this.login == "" || this.password == "" || this.name == "" || this.surname == "" || this.mail == "") { // проверка на заполненность полей
+            if (!this.login || !this.password || !this.name || !this.surname || !this.mail) { // проверка на заполненность полей
                 this.validateMsg = 'Заполните все поля!';
             }
             else {
-                axios // проверка на несуществование учетки в бд (1 нет, 0 есть)
+                axios
                     .post(cookie.linkAPI, {
-                        type: "checkReg",
+                        type: "registration",
                         login: this.login,
-                        mail: this.mail
+                        password: this.password,
+                        name: this.name, 
+                        surname: this.surname,
+                        mail: this.mail,
                     })
                     .then(response => {
-                        if (response.data.status) { // если учетки нет
-                            this.sendRegData();
+                        if (response.data.status) { // успешно зарегались
+                            this.validateMsg = 'Вы успешно <br>зарегистрировались!';
+                            this.successReg = true;
+                            setTimeout(() => this.$router.push({path: '/'}), 2000); // переход на главную страницу через 2 сек
                         }
-                        else { // если учетка есть
-                            this.validateMsg = 'Данный логин или почта<br> уже используется! <br>Введите другие данные!';
-                            this.successReg = false;
-                            return 0;
+                        else {
+                            if (response.data.message == "loginExist") { // если учетка есть
+                                this.validateMsg = 'Данный логин или почта<br> уже используется! <br>Введите другие данные!';
+                                this.successReg = false;
+                            }
+                            else {
+                                console.log("Empty data"); // Ошибка в запросе на insert
+                            }
                         }
-                    }
-                    )
+                    })
                     .catch(error => console.log(error));
             }
-        },
-        sendRegData() { // запрос в бд на регистрацию
-            axios
-                .post(cookie.linkAPI, {
-                    type: "registration",
-                    login: this.login,
-                    password: this.password,
-                    name: this.name, 
-                    surname: this.surname,
-                    mail: this.mail,
-                })
-                .then(response => {
-                    if (response.data.status) { // если успешная запись в БД из API
-                        this.validateMsg = 'Вы успешно <br>зарегистрировались!';
-                        this.successReg = true;
-                        setTimeout(() => this.$router.push({path: '/'}), 2000); // переход на главную страницу через 2 сек
-                    }
-                    else{
-                        console.log("Empty data"); // пустое значение из API
-                    }
-                }
-                )
-                .catch(error => console.log(error));
         }
     }
 }

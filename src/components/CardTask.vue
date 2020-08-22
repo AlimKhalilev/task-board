@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="card-footer-add">
-                <button @click="addNewItem" class="card-footer-add-new"><svg><use xlink:href="../assets//main.svg#icon_add"></use></svg></button>
+                <button @click="addNewItem" class="card-footer-add-new"><svg><use xlink:href="../assets/main.svg#icon_add"></use></svg></button>
                 <button v-if="!onceData.edit" @click="editMode" class="card-footer-add-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
                 <button @click="deleteMode" class="card-footer-add-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
                 <button v-if="onceData.edit" @click="updateCard" aria-label="checkbox"></button>
