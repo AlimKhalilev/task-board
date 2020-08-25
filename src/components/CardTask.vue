@@ -1,5 +1,5 @@
 <template>
-    <div class="card" tabindex="0">
+    <div class="card" style="opacity: 0" tabindex="0">
 
         <div class="card-header">
 
@@ -14,7 +14,15 @@
         <div class="card-container">
             <div class="card-container-items">
 
-                <CardTaskItem ref="taskItems" @updateCardItem="updateCardItem" v-for="taskInfo in onceData.info.tasksInfo" :key="taskInfo.id" v-bind:taskInfo="taskInfo" v-bind:cardId="onceData.id"/>
+                <CardTaskItem ref="taskItems" v-for="(taskInfo, taskIndex) in onceData.info.tasksInfo" :key="taskInfo.id" 
+                    v-bind:taskInfo="taskInfo" 
+                    v-bind:cardIndex="index" 
+                    v-bind:cardID="onceData.id" 
+                    v-bind:taskIndex="taskIndex" 
+                    v-bind:cardSaved="onceData.saved" 
+                    v-bind:isFullDelete="onceData.info.tasksInfo.length == 1 ? true : false"
+                    v-bind:isFullComplete="(onceData.info.tasksInfo.length - onceData.info.tasksInfo.reduce((accum, current) => accum + Number(current.complete), 0) == 1 ? true : false)"
+                />
 
             </div>
         </div>
@@ -29,7 +37,7 @@
             </div>
             <div class="card-footer-add">
                 <button @click="addNewItem" class="card-footer-add-new"><svg><use xlink:href="../assets/main.svg#icon_add"></use></svg></button>
-                <button v-if="!onceData.edit" @click="editMode" class="card-footer-add-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
+                <button v-if="!onceData.edit" @click="changeCardEdit({index, edit: true})" class="card-footer-add-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
                 <button @click="deleteMode" class="card-footer-add-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
                 <button v-if="onceData.edit" @click="updateCard" aria-label="checkbox"></button>
                 <div class="card-footer-add-dropdown" v-if="isDelete">
@@ -46,9 +54,12 @@
 
 <script>
 import Toast from '@/components/Toast.vue'
+import cookie from '@/components/Cookie.vue'
 import CardTaskItem from '@/components/CardTaskItem.vue'
+import { mapActions, mapMutations } from 'vuex'
+
 export default {
-    props: ["onceData"],
+    props: ["onceData", "index"],
     data() {
         return {
             title: this.onceData.info.title,
@@ -73,6 +84,8 @@ export default {
         }
     },
     methods: {
+        ...mapActions(["sendDataResponse"]),
+        ...mapMutations(["deleteCardStore", "changeCardEdit", "addNewTaskItem"]),
         isTaskItemsEntered() { // Проверка на заполненность полей в TaskItem
             let isHasText = 1;
             let taskCount = this.$refs.taskItems.length;
@@ -88,52 +101,39 @@ export default {
             }
             return isHasText;
         },
-        getTaskItemsInfo() { // получение массива текста items из TaskItem
-            let arrText = [];
-            let taskCount = this.$refs.taskItems.length;
-            for (let j = 0; taskCount > j; j++) {
-                arrText.push(this.$refs.taskItems[j].text);
-            }
-            return arrText;
-        },
-        updateCardItem(type, mode, id, title, text, taskid, complete) {
-            let EditIndex = 1500000000000;
-            if (id <= EditIndex) { // если карточка уже в бд
-                this.$emit("updateCard", type, mode, id, title, text, taskid, complete);
-            }
-            else { // если карточка еще не сохранена
-                if (mode == "deleteItem") { // если удаляем task item
-                    this.$emit("updateCard", type, mode, id, title, text, taskid, complete);
-                }
-                else {
-                    Toast.show("Завершите редактирование карточки");
-                }
-            }
-        },
         updateCard() {
             if (!this.title) {
                 Toast.show("Заполните поле названия задачи");
                 this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
             }
             else {
-                if (this.onceData.id <= this.$parent.maxCardID) { // edit
-                    this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
+                if (this.onceData.saved) { // update
+                    this.sendCardInfo()
                 }
                 else { // add
                     if (this.isTaskItemsEntered()) {
-                        this.text = this.getTaskItemsInfo();
-                        this.$emit("updateCard", "task", "add", this.onceData.id, this.title, this.text, 0, false);
+                        this.text = this.$refs.taskItems.map(arr => arr.text); // получение массива текста items из TaskItem
+                        this.sendCardInfo()
                     }
                 }
             }
         },
-        editMode() {
-            this.$emit("updateCard", "task", "edit", this.onceData.id, this.title, this.text, 0, false);
+        sendCardInfo() {
+            this.sendDataResponse({
+                card: "task",
+                type: "updateTask", 
+                mode: (this.onceData.saved ? "editTask" : "addTask"), 
+                cardIndex: this.index,
+                cardID: this.onceData.id,
+                title: this.title, 
+                text: this.text
+            })
         },
         deleteMode() {
-            if (this.onceData.edit) {
-                this.onceData.edit = false;
-                this.title = this.onceData.info.title;
+            if (this.onceData.edit && this.onceData.saved) { // если Edit mode и карточка сохранена, откатываем значения
+                this.changeCardEdit({index: this.index, edit: false})
+                this.text = this.onceData.info.text
+                this.title = this.onceData.info.title
             }
             else {
                 this.isDelete = !this.isDelete;
@@ -141,14 +141,38 @@ export default {
         },
         deleteCard(mode) {
             if (mode == "yes") {
-                this.$emit("updateCard", "task", "delete", this.onceData.id, this.title, this.text, 0, false);
+                if (this.onceData.saved) {
+                    this.sendDataResponse({
+                        card: "task",
+                        type: "updateTask",
+                        mode: "deleteTask",
+                        cardIndex: this.index,
+                        cardID: this.onceData.id,
+                    })
+                }
+                else {
+                    this.deleteCardStore(this.index)
+                }
             }
             if (mode == "no") {
                 this.isDelete = false;
             }
         },
         addNewItem() {
-            this.$emit("updateCard", "task", "newItem", this.onceData.id, this.title, this.text, 0, false);
+            this.addNewTaskItem({
+                content: {
+                    id: Date.now(),
+                    text: "",
+                    complete: false,
+                    dateAdd: cookie.getNowDate(),
+                    timeAdd: cookie.getNowTime(),
+                    dateComplete: "",
+                    timeComplete: "",
+                    edit: true,
+                    saved: false
+                },
+                index: this.index
+            })
             this.isAddItem = true;
         }
     },

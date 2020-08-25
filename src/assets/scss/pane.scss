@@ -42,6 +42,7 @@
                 a {
                     display: flex;
                     text-decoration: none;
+                    outline: none;
 
                     span {
                         color: $color_main;
@@ -50,7 +51,7 @@
                         padding-top: 0.2rem;
                     }
 
-                    &:hover {
+                    &:hover, &:focus {
                         span {
                             color: $color_success;
                         }

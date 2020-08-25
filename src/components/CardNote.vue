@@ -1,12 +1,12 @@
 <template>
-    <div class="card" tabindex="0">
+    <div class="card" style="opacity: 0" tabindex="0">
 
         <div class="card-header">
 
-            <input v-on:keydown.ctrl.enter="updateCard" placeholder="Название записи" type="text" v-if="onceData.edit" v-model="title" ref="titleDOM">
+            <input v-on:keydown.ctrl.enter="updateCard" placeholder="Название записи" type="text" v-if="this.onceData.edit" v-model="title" ref="titleDOM">
             <h3 v-else>{{ title }}</h3>
 
-            <div class="card-header-links" v-if="!onceData.edit">
+            <div class="card-header-links" v-if="!this.onceData.edit">
                 <svg><use xlink:href="../assets/main.svg#icon_window_max"></use></svg>
             </div>
         </div>
@@ -14,7 +14,7 @@
         <div class="card-container">
             <div class="card-container-items">
                 <div class="card-container-items-content">
-                    <textarea v-on:keydown.ctrl.enter="updateCard" placeholder="Текст записи" type="text" v-if="onceData.edit" v-model="text" ref="textDOM"></textarea>
+                    <textarea v-on:keydown.ctrl.enter="updateCard" placeholder="Текст записи" type="text" v-if="this.onceData.edit" v-model="text" ref="textDOM"></textarea>
                     <span v-else v-html="lineSkip(text)"></span>
                 </div>
             </div>
@@ -28,9 +28,9 @@
                 </div>
             </div>
             <div class="card-footer-edit">
-                <button v-if="!onceData.edit" @click="editMode" class="card-footer-edit-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
+                <button v-if="!this.onceData.edit" @click="changeCardEdit({index, edit: true})" class="card-footer-edit-change"><svg><use xlink:href="../assets/main.svg#icon_pencil"></use></svg></button>
                 <button @click="deleteMode" class="card-footer-edit-delete"><svg><use xlink:href="../assets/main.svg#icon_close"></use></svg></button>
-                <button v-if="onceData.edit" @click="updateCard" aria-label="checkbox"></button>
+                <button v-if="this.onceData.edit" @click="updateCard" aria-label="checkbox"></button>
                 <div class="card-footer-edit-dropdown" v-if="isDelete">
                     <h5>Удалить запись?</h5>
                     <div class="card-footer-edit-dropdown-content">
@@ -46,18 +46,20 @@
 
 <script>
 import Toast from '@/components/Toast.vue'
+import { mapActions, mapMutations } from 'vuex'
+
 export default {
-    props: ["onceData"],
+    props: ["onceData", "index"],
     data() {
         return {
             text: this.onceData.info.text,
             title: this.onceData.info.title,
-            isEdit: false,
+            isEdit: false, // переключатель для update (для фокуса)
             isDelete: false,
         }
     },
     updated() {
-        if (this.onceData.edit && !this.isEdit) { // клацнули на edit
+        if (this.onceData.edit && !this.isEdit) {
             this.isEdit = true;
             this.$refs.titleDOM.focus(); // ставим focus на title, когда EDIT MODE
         }
@@ -67,6 +69,8 @@ export default {
         }
     },
     methods: {
+        ...mapActions(["sendDataResponse"]),
+        ...mapMutations(["deleteCardStore", "changeCardEdit"]),
         updateCard() {
             if (!this.title) { // пустая строка ложь и наоборот
                 Toast.show("Заполните поле названия записи!");
@@ -77,25 +81,41 @@ export default {
                 this.$refs.textDOM.focus();
             }
             if (this.title && this.text) {
-                this.$emit("updateCard", "note", "update", this.onceData.id, this.title, this.text, 0, false);
+                this.sendDataResponse({
+                    card: "note",
+                    type: "updateNote", 
+                    mode: (this.onceData.saved ? "editNote" : "addNote"), 
+                    cardIndex: this.index,
+                    cardID: this.onceData.id,
+                    title: this.title, 
+                    text: this.text
+                })
             }
-        },
-        editMode() {
-            this.$emit("updateCard", "note", "edit", this.onceData.id, this.title, this.text, 0, false);
         },
         deleteCard(mode) {
             if (mode == "yes") {
-                this.$emit("updateCard", "note", "delete", this.onceData.id, this.title, this.text, 0, false);
+                if (this.onceData.saved) {
+                    this.sendDataResponse({
+                        card: "note",
+                        type: "updateNote",
+                        mode: "deleteNote",
+                        cardIndex: this.index,
+                        cardID: this.onceData.id,
+                    })
+                }
+                else {
+                    this.deleteCardStore(this.index)
+                }
             }
             if (mode == "no") {
                 this.isDelete = false;
             }
         },
         deleteMode() {
-            if (this.onceData.edit) {
-                this.onceData.edit = false;
-                this.text = this.onceData.info.text;
-                this.title = this.onceData.info.title;
+            if (this.onceData.edit && this.onceData.saved) { // если Edit mode и карточка сохранена, откатываем значения
+                this.changeCardEdit({index: this.index, edit: false})
+                this.text = this.onceData.info.text
+                this.title = this.onceData.info.title
             }
             else {
                 this.isDelete = !this.isDelete;

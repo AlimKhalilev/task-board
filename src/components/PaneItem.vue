@@ -1,5 +1,5 @@
 <template>
-    <button class="items-item" @click="goToCard" v-if="onceData.info.title != ''">
+    <button class="items-item" @click="goToCard" v-if="onceData.info.title != ''" style="opacity: 0">
         <h4 class="items-item-text">{{ onceData.info.title }}</h4>
         <span 
             v-if="onceData.type == 'task'" 
@@ -13,11 +13,6 @@
 <script>
 export default {
     props: ['onceData', 'ind'],
-    data() {
-        return {
-
-        }
-    },
     methods: {
         getTaskComplete(arr) {
             let count = 0;

@@ -25,6 +25,19 @@ export default {
         d.setTime(d.getTime() + (exdays*24*60*60*1000));
         var expires = "expires="+ d.toUTCString();
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
+    },
+    getNowDate() {
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth()+1).padStart(2, '0'); // мясяцы начинаются с 0 (0 - январь)
+        let yy = String(today.getFullYear()).substring(2, 4);
+        return `${dd}.${mm}.${yy}`;
+    },
+    getNowTime() {
+        let today = new Date();
+        let hh = String(today.getHours()).padStart(2, '0');
+        let mm = String(today.getMinutes()).padStart(2, '0');
+        return `${hh}:${mm}`;
+    },
 }
 </script>

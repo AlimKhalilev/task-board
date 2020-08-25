@@ -72,7 +72,7 @@ form button, form input[type="submit"] {
     @include boxShadowItem;
     border: none;
 
-    &:hover {
+    &:hover, &:focus {
         transform: translate(-0.15rem, -0.15rem);
         @include boxShadowItemHover;
     }

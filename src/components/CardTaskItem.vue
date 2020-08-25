@@ -1,7 +1,7 @@
 <template>
     <div class="card-container-items-item" tabindex="0">
         <div class="card-container-items-item-text" @click="sendCompleteMode">
-            <input type="checkbox" v-model="complete" :disabled="complete" v-if="!taskInfo.edit">
+            <input type="checkbox" v-model="taskInfo.complete" :disabled="taskInfo.complete" v-if="!taskInfo.edit">
             <span v-if="!taskInfo.edit">{{ text }}</span>
             <textarea v-on:keydown.ctrl.enter="addItem" placeholder="Текст задачи" type="text" v-if="taskInfo.edit" v-model="text" ref="textDOM"></textarea>
         </div>
@@ -36,12 +36,12 @@
 
 <script>
 import Toast from '@/components/Toast.vue'
+import { mapActions, mapMutations } from 'vuex'
 export default {
-    props: ["taskInfo", "cardId"],
+    props: ["taskInfo", "cardIndex", "cardID", "taskIndex", "cardSaved", "isFullDelete", "isFullComplete"],
     data() {
         return {
             text: this.taskInfo.text,
-            complete: this.taskInfo.complete,
             isEdit: false,
             isDelete: false,
             isComplete: false
@@ -58,20 +58,33 @@ export default {
         }
     },
     methods: {
+        ...mapActions(["sendDataResponse"]),
+        ...mapMutations(["deleteTaskItemStore", "changeTaskItemEdit"]),
         addItem() {
             if (!this.text) {
                 Toast.show("Заполните поле текста задачи");
             }
-            else {
-                this.$emit("updateCardItem", "task", "addItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается только текст
+            if (this.text && !this.cardSaved) { // если карточка, в которой добавляется taskItem не сохранена
+                Toast.show("Завершите редактирование карточки");
+            }
+            if (this.text && this.cardSaved) { // если поле заполнено и карточка сохранена
+                this.sendDataResponse({
+                    type: "updateTaskItem",
+                    mode: (this.taskInfo.saved ? "updateTaskItem" : "addTaskItem"),
+                    cardIndex: this.cardIndex,
+                    taskIndex: this.taskIndex,
+                    cardID: this.cardID,
+                    taskID: this.taskInfo.id,
+                    text: this.text
+                })
             }
         },
         editItem() {
-            this.$emit("updateCardItem", "task", "editItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается edit true / false
+            this.changeTaskItemEdit({cardIndex: this.cardIndex, taskIndex: this.taskIndex, edit: true})
         },
         deleteMode() {
-            if (this.taskInfo.edit) {
-                this.taskInfo.edit = false;
+            if (this.taskInfo.edit && this.taskInfo.saved) {
+                this.changeTaskItemEdit({cardIndex: this.cardIndex, taskIndex: this.taskIndex, edit: false})
                 this.text = this.taskInfo.text;
             }
             else {
@@ -80,27 +93,42 @@ export default {
         },
         deleteItem(mode) {
             if (mode == "yes") {
-                this.$emit("updateCardItem", "task", "deleteItem", this.cardId, "", this.text, this.taskInfo.id, 0); // передается delete mode
-                this.isDelete = false;
+                if (this.taskInfo.saved) { // если Edit mode и taskItem сохранен, откатываем значения
+                    this.sendDataResponse({
+                        card: "task",
+                        type: (this.isFullDelete ? "updateTask" : "updateTaskItem"),
+                        mode: (this.isFullDelete ? "deleteTask" : "deleteTaskItem"),
+                        cardIndex: this.cardIndex,
+                        taskIndex: this.taskIndex,
+                        cardID: this.cardID,
+                        taskID: this.taskInfo.id
+                    })
+                }
+                else {
+                    this.deleteTaskItemStore({cardIndex: this.cardIndex, taskIndex: this.taskIndex})
+                }
             }
             if (mode == "no") {
                 this.isDelete = false;
             }
         },
         sendCompleteMode() {
-            if (!this.complete && !this.taskInfo.edit) {
+            if (!this.taskInfo.complete && !this.taskInfo.edit) {
                 this.isComplete = !this.isComplete; // если пункт еще не выполнен || и он не редактируется
             }
         },
         sendComplete(mode) {
             if (mode == "yes") {
-                this.complete = true;
-                this.$emit("updateCardItem", "task", "sendComplete", this.cardId, "", this.text, this.taskInfo.id, this.complete); // complete true/false
-                this.isComplete = false;
+                this.sendDataResponse({
+                    type: "updateTaskItem",
+                    mode: (this.isFullComplete ? "sendCompleteFull" : "sendComplete"),
+                    cardIndex: this.cardIndex,
+                    taskIndex: this.taskIndex,
+                    cardID: this.cardID,
+                    taskID: this.taskInfo.id
+                })
             }
-            if (mode == "no") {
-                this.isComplete = false;
-            }
+            this.isComplete = false;
         },
         setTextFocus() {
             this.$refs.textDOM.focus();
