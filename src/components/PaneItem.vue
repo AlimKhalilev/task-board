@@ -1,11 +1,11 @@
 <template>
-    <button class="items-item" @click="goToCard" v-if="onceData.info.title != ''" style="opacity: 0">
+    <button class="items-item" @click="goToCard" v-if="onceData.info.title != ''">
         <h4 class="items-item-text">{{ onceData.info.title }}</h4>
         <span 
             v-if="onceData.type == 'task'" 
             class="items-item-stat" 
-            v-bind:class="{ completed: getTaskComplete(onceData.info.tasksInfo) == onceData.info.tasksInfo.length}">
-            {{ getTaskComplete(onceData.info.tasksInfo) }} / {{ onceData.info.tasksInfo.length }}
+            v-bind:class="{ completed: getComplete(onceData.info.tasksInfo) == onceData.info.tasksInfo.length}">
+            {{ getComplete(onceData.info.tasksInfo) }} / {{ onceData.info.tasksInfo.length }}
         </span>
     </button>
 </template>
@@ -14,14 +14,8 @@
 export default {
     props: ['onceData', 'ind'],
     methods: {
-        getTaskComplete(arr) {
-            let count = 0;
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].complete) {
-                    count++;
-                }
-            }
-            return count;
+        getComplete(arr) {
+            return arr.reduce((prev, current) => prev + Number(current.complete), 0)
         },
         goToCard() {
             document.getElementsByClassName("items-item")[this.ind].blur(); // убрать фокус

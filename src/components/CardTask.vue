@@ -1,5 +1,5 @@
 <template>
-    <div class="card" style="opacity: 0" tabindex="0">
+    <div class="card" tabindex="0">
 
         <div class="card-header">
 

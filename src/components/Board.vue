@@ -1,7 +1,7 @@
 <template>
     <section class="section-outer section-main">
         <div class="section-inner">
-            <Pane @openAuth="openAuth" @addCard="addCard" v-bind:mainData="mainData"/>
+            <Pane @openAuth="openAuth" v-bind:mainData="mainData"/>
             <div class="section-main-cards" v-bind:class="{empty: !mainData.length}">
                 <div v-if="isLoadData && mainData.length == 0" class="section-main-cards-empty">
                     <h2>Добро пожаловать в TaskBoard!</h2>
@@ -22,23 +22,17 @@
 import Pane from '@/components/Pane.vue'
 import CardNote from '@/components/CardNote.vue'
 import CardTask from '@/components/CardTask.vue'
-import cookie from '@/components/Cookie.vue'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 export default {
-    data() {
-        return {
-            isFirstLoad: true
-        }
-    },
-    computed: mapGetters(["mainData", "isLoadData"]),
+    computed: mapGetters(["mainData", "isLoadData", "isFirstLoad"]),
     async mounted() {
         await this.getAllCards()
     },
     updated() {
-        if (this.isFirstLoad) {
-            this.animateAppearance(0.2)
-            this.isFirstLoad = false
+        if (!this.isFirstLoad) {
+            this.animateAppearance(0.2) // анимируем
+            this.completeFirstLoad() // и переключаем первую прогрузку данных
         }
         if (this.mainData.length >= 1) { // если уже загрузились и карточки есть
             let newCard = document.getElementsByClassName("card")[0].querySelector(".card-header > input"); // проверка на фокус при доб. карты (на title)
@@ -52,52 +46,12 @@ export default {
     },
     methods: {
         ...mapActions(["getAllCards"]),
-        ...mapMutations(["addNewCard"]),
+        ...mapMutations(["addNewCard", "completeFirstLoad"]),
         filterData(data) {
             return data.slice().reverse(); // обратный массив
         },
         openAuth() {
             this.$emit("openAuth", 0); // кидаем на авторизацию
-        },
-        addCard(method) {
-            if (method == "note") { // если запись
-                this.addNewCard(
-                    {id:Date.now(), type: "note", edit: true, saved: false, info: // устанавливаем временный id для карты
-                        {
-                            title: "",
-                            text: "",
-                            date: cookie.getNowDate(),
-                            time: cookie.getNowTime()
-                        }
-                    },
-                )
-            }
-            else { // если задача
-                this.addNewCard(
-                    {id:Date.now(), type: "task", edit: true, saved: false, info:
-                        {
-                            title: "",
-                            dateAdd: cookie.getNowDate(),
-                            timeAdd: cookie.getNowTime(),
-                            dateComplete: "",
-                            timeComplete: "",
-                            tasksInfo: [
-                                {
-                                    id: Date.now()+1,
-                                    text: "",
-                                    complete: false,
-                                    dateAdd: cookie.getNowDate(),
-                                    timeAdd: cookie.getNowTime(),
-                                    dateComplete: "",
-                                    timeComplete: "",
-                                    edit: true,
-                                    saved: false
-                                }
-                            ]
-                        }
-                    }
-                )
-            }
         },
         animateAppearance(timeEqual) {
             if (!this.mainData.length) { // если карточек нет

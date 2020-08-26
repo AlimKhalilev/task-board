@@ -1,8 +1,7 @@
 <template>
-    <div class="card" style="opacity: 0" tabindex="0">
+    <div class="card" tabindex="0">
 
         <div class="card-header">
-
             <input v-on:keydown.ctrl.enter="updateCard" placeholder="Название записи" type="text" v-if="this.onceData.edit" v-model="title" ref="titleDOM">
             <h3 v-else>{{ title }}</h3>
 

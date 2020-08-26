@@ -53,6 +53,9 @@ export default {
             state.cards = data
             state.isLoadData = true
         },
+        completeFirstLoad(state) {
+            state.isFirstLoad = true
+        },
         addNewCard(state, data) {
             state.cards.push(data)
         },
@@ -124,13 +127,17 @@ export default {
     state: {
         cards: [],
         isLoadData: false,
+        isFirstLoad: false,
     },
     getters: {
         mainData(state) {
-            return state.cards;
+            return state.cards
         },
         isLoadData(state) {
-            return state.isLoadData;
+            return state.isLoadData
         },
+        isFirstLoad(state) {
+            return state.isFirstLoad
+        }
     }
 }

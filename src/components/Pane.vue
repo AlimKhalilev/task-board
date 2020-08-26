@@ -49,11 +49,13 @@ import cookie from '@/components/Cookie.vue'
 import PaneItem from '@/components/PaneItem.vue'
 import SlideUpDown from 'vue-slide-up-down'
 
+import { mapGetters, mapMutations } from 'vuex'
+
 export default {
+    computed: mapGetters(["isFirstLoad"]),
     props: ["mainData"],
     data() {
         return {
-            firstLoad: false,
             delay: 0,
             windowWidth: screen.width,
             menu: (screen.width <= 576 ? false : true),
@@ -62,13 +64,12 @@ export default {
         }
     },
     updated() { // БЛОК ДЛЯ АНИМАЦИИ
-        if (!this.firstLoad) { // вызываем только 1 раз после первой загрузки
+        if (!this.isFirstLoad) { // вызываем только 1 раз после первой загрузки
             let elem = document.querySelector(".section-main-pane");
             elem.style = 'opacity: 0; animation: fadeIn 0.7s ease-in-out 0s forwards';
             elem.addEventListener('animationend', () => {
                 elem.removeAttribute("style");
             });
-            this.firstLoad = true;
         }
     },
     mounted() {
@@ -76,6 +77,7 @@ export default {
         this.getMyLogin() // запрашиваем логин
     },
     methods: {
+        ...mapMutations(["addNewCard"]),
         filterData(data) {
             return data.slice().reverse(); // обратный массив
         },
@@ -86,10 +88,44 @@ export default {
         },
         addCard(method) {
             document.querySelector(".account-links-icon-dropdown > button").blur(); // убрать фокус
-            this.$emit("addCard", method);
-            // setTimeout(() => 
-            //     document.getElementsByTagName("html")[0].scrollIntoView({behavior: "smooth", block: "end"}), 
-            // 50); // плавная прокрутка вниз
+            if (method == "note") { // если запись
+                this.addNewCard(
+                    {id:Date.now(), type: "note", edit: true, saved: false, info: // устанавливаем временный id для карты
+                        {
+                            title: "",
+                            text: "",
+                            date: cookie.getNowDate(),
+                            time: cookie.getNowTime()
+                        }
+                    },
+                )
+            }
+            else { // если задача
+                this.addNewCard(
+                    {id:Date.now(), type: "task", edit: true, saved: false, info:
+                        {
+                            title: "",
+                            dateAdd: cookie.getNowDate(),
+                            timeAdd: cookie.getNowTime(),
+                            dateComplete: "",
+                            timeComplete: "",
+                            tasksInfo: [
+                                {
+                                    id: Date.now()+1,
+                                    text: "",
+                                    complete: false,
+                                    dateAdd: cookie.getNowDate(),
+                                    timeAdd: cookie.getNowTime(),
+                                    dateComplete: "",
+                                    timeComplete: "",
+                                    edit: true,
+                                    saved: false
+                                }
+                            ]
+                        }
+                    }
+                )
+            }
         },
         getMyLogin() {
             axios // запрос на авторизацию
